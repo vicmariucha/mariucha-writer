@@ -80,7 +80,7 @@ function ArticlesPage() {
 
       {filtered.length === 0 ? (
         <p className="animate-fade-in py-24 text-center font-display text-2xl text-muted-foreground">
-          No articles match that search.
+          Nothing here. Either I haven't written it yet, or you spelled it creatively.
         </p>
       ) : (
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

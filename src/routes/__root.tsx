@@ -79,13 +79,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Elena Marsh — Science Writer & Journalist" },
+      { title: "Victória Mariucha — Computer Engineer & Science Writer" },
       {
         name: "description",
         content:
-          "Elena Marsh translates complex science into compelling stories — longform journalism on biotech, climate, space, neuroscience and health.",
+          "Victória Mariucha, computer engineer and developer from Sorocaba, Brazil, writing about science, technology, code and Spider-Man.",
       },
-      { name: "author", content: "Elena Marsh" },
+      { name: "author", content: "Victória Mariucha" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
