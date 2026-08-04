@@ -151,7 +151,7 @@ function Field({
   name: string;
   type?: string;
   placeholder?: string;
-  defaultValue?: string;
+  defaultValue?: string | undefined;
 }) {
   return (
     <div>
