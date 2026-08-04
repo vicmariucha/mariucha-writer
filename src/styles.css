@@ -27,6 +27,9 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-terracotta: var(--terracotta);
+  --color-cobalt: var(--cobalt);
+  --color-amber: var(--amber);
+  --color-plum: var(--plum);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
