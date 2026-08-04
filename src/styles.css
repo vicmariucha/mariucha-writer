@@ -27,6 +27,9 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-terracotta: var(--terracotta);
+  --color-cobalt: var(--cobalt);
+  --color-amber: var(--amber);
+  --color-plum: var(--plum);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
@@ -53,16 +56,19 @@
   --secondary-foreground: oklch(0.235 0.008 60);
   --muted: oklch(0.938 0.012 85);
   --muted-foreground: oklch(0.505 0.012 70);
-  /* muted sage */
-  --accent: oklch(0.545 0.045 148);
+  /* vivid sage */
+  --accent: oklch(0.575 0.115 152);
   --accent-foreground: oklch(0.985 0.005 90);
-  /* deep terracotta */
-  --terracotta: oklch(0.525 0.115 42);
+  /* warm terracotta */
+  --terracotta: oklch(0.575 0.165 38);
+  --cobalt: oklch(0.545 0.155 250);
+  --amber: oklch(0.735 0.155 78);
+  --plum: oklch(0.505 0.145 330);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0.005 90);
   --border: oklch(0.885 0.012 82);
   --input: oklch(0.885 0.012 82);
-  --ring: oklch(0.545 0.045 148);
+  --ring: oklch(0.575 0.115 152);
 }
 
 @layer base {

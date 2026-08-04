@@ -7,17 +7,16 @@ import { articles, tags } from "@/data/articles";
 export const Route = createFileRoute("/articles")({
   head: () => ({
     meta: [
-      { title: "Articles — Elena Marsh, Science Writer" },
+      { title: "Articles — Victória Mariucha, Engineer & Science Writer" },
       {
         name: "description",
         content:
-          "Selected science journalism by Elena Marsh: features on biotech, climate, space, neuroscience and health. Filter by topic or search by keyword.",
+          "Essays and explainers on code, AI, space, science and Spider-Man by Victória Mariucha. Filter by topic or search by keyword.",
       },
-      { property: "og:title", content: "Articles — Elena Marsh, Science Writer" },
+      { property: "og:title", content: "Articles — Victória Mariucha, Engineer & Science Writer" },
       {
         property: "og:description",
-        content:
-          "Selected science journalism: biotech, climate, space, neuroscience and health features.",
+        content: "Essays and explainers on code, AI, space, science and one friendly neighborhood superhero.",
       },
     ],
   }),
@@ -44,13 +43,15 @@ function ArticlesPage() {
 
   return (
     <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
-      <p className="eyebrow">Archive</p>
+      <p className="eyebrow">The archive</p>
       <h1 className="mt-5 max-w-3xl font-display text-[2.4rem] leading-[1.08] sm:text-6xl">
-        Articles
+        Articles, essays and <em className="italic text-terracotta">extremely detailed tangents</em>
       </h1>
       <p className="mt-5 max-w-xl leading-relaxed text-muted-foreground">
-        Reported features, essays and explainers. Filter by topic or search the archive.
+        Everything I've written about code, AI, space and science — plus a few pieces my editor
+        (me) probably should have questioned. Filter by topic or search the archive.
       </p>
+
 
       <div className="mt-12 flex flex-col gap-6 border-y border-border py-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-wrap gap-2">
@@ -79,7 +80,7 @@ function ArticlesPage() {
 
       {filtered.length === 0 ? (
         <p className="animate-fade-in py-24 text-center font-display text-2xl text-muted-foreground">
-          No articles match that search.
+          Nothing here. Either I haven't written it yet, or you spelled it creatively.
         </p>
       ) : (
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
