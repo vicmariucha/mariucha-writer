@@ -1,27 +1,33 @@
 import { Link } from "@tanstack/react-router";
+import { MapPin } from "lucide-react";
 
 const socials = [
   { label: "LinkedIn", href: "https://linkedin.com" },
+  { label: "GitHub", href: "https://github.com" },
   { label: "X", href: "https://x.com" },
   { label: "Substack", href: "https://substack.com" },
-  { label: "ORCID", href: "https://orcid.org" },
 ];
 
 export function SiteFooter() {
   return (
     <footer className="mt-24 border-t border-border">
+      <span className="mx-auto block h-1 max-w-6xl bg-linear-to-r from-cobalt via-plum to-terracotta" />
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-5 py-12 sm:px-8 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="font-display text-2xl">Elena Marsh</p>
+          <p className="font-display text-2xl">Victória Mariucha</p>
           <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-            Longform science journalism, features and editorial consulting — from the lab bench to
-            the page.
+            Computer engineer and developer writing about science, technology and the occasional
+            radioactive spider. Available for work, collaborations and very nerdy conversations.
+          </p>
+          <p className="mt-4 inline-flex items-center gap-2 text-xs text-muted-foreground">
+            <MapPin className="h-3.5 w-3.5 text-accent" />
+            Sorocaba, Brazil · UTC−3 (America/Sao_Paulo)
           </p>
           <a
-            href="mailto:hello@elenamarsh.com"
-            className="link-underline mt-4 inline-block text-sm text-accent"
+            href="mailto:vicmariucha@gmail.com"
+            className="link-underline mt-4 block text-sm text-terracotta"
           >
-            hello@elenamarsh.com
+            vicmariucha@gmail.com
           </a>
         </div>
         <div className="flex flex-col gap-4 md:items-end">
@@ -32,7 +38,7 @@ export function SiteFooter() {
                 href={s.href}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="link-underline text-xs uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground"
+                className="link-underline text-xs uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-cobalt"
               >
                 {s.label}
               </a>
@@ -47,7 +53,7 @@ export function SiteFooter() {
             </Link>
           </div>
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Elena Marsh. All rights reserved.
+            © {new Date().getFullYear()} Victória Mariucha. Built with coffee and stubbornness.
           </p>
         </div>
       </div>

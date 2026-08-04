@@ -13,12 +13,13 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-md">
+      <span className="block h-1 bg-linear-to-r from-terracotta via-amber to-cobalt" />
       <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-5 py-4 sm:px-8">
         <Link to="/" className="min-w-0" onClick={() => setOpen(false)}>
           <span className="block truncate font-display text-lg tracking-tight sm:text-xl">
-            Elena Marsh
+            Victória Mariucha
           </span>
-          <span className="eyebrow block">Science Writer</span>
+          <span className="eyebrow block">Computer Engineer · Developer</span>
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
@@ -26,7 +27,7 @@ export function SiteHeader() {
             <Link
               key={l.to}
               to={l.to}
-              className="link-underline text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className="link-underline text-sm text-muted-foreground transition-colors hover:text-terracotta"
               activeProps={{ className: "text-foreground" }}
             >
               {l.label}
@@ -35,7 +36,7 @@ export function SiteHeader() {
           <Link
             to="/contact"
             search={{ intent: "hire" }}
-            className="rounded-full border border-foreground px-5 py-2 text-xs tracking-[0.18em] uppercase transition-all duration-300 hover:bg-foreground hover:text-background hover:shadow-elevate"
+            className="rounded-full border border-terracotta px-5 py-2 text-xs uppercase tracking-[0.18em] text-terracotta transition-all duration-300 hover:bg-terracotta hover:text-background hover:shadow-elevate"
           >
             Hire Me
           </Link>
@@ -67,7 +68,7 @@ export function SiteHeader() {
             to="/contact"
             search={{ intent: "hire" }}
             onClick={() => setOpen(false)}
-            className="mt-5 inline-block rounded-full border border-foreground px-5 py-2 text-xs uppercase tracking-[0.18em]"
+            className="mt-5 inline-block rounded-full border border-terracotta px-5 py-2 text-xs uppercase tracking-[0.18em] text-terracotta"
           >
             Hire Me
           </Link>
