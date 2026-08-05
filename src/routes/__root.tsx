@@ -79,19 +79,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Victória Mariucha – Science Writer" },
+      { title: "Vic Mariucha – Science Writer & Freelance Developer Writer" },
       {
         name: "description",
         content:
-          "Computer engineer and developer from Sorocaba, Brazil, writing about science, technology, code and Spider-Man. Available for writing work and collaborations.",
+          "Freelance science writer and developer writer. Vic Mariucha is a computer engineer in Brazil turning research on space, health, environment and technology into clear, engaging English.",
       },
       { name: "author", content: "Victória Mariucha" },
+      {
+        name: "keywords",
+        content:
+          "science writer, freelance science writer, freelance writer, developer writer, technical writer, science communicator, technology writer, science journalism, Vic Mariucha",
+      },
+      { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1" },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Vic Mariucha" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:title", content: "Victória Mariucha – Science Writer" },
-      { name: "twitter:title", content: "Victória Mariucha – Science Writer" },
-      { property: "og:description", content: "Computer engineer and developer from Sorocaba, Brazil, writing about science, technology, code and Spider-Man. Available for writing work and collaborations." },
-      { name: "twitter:description", content: "Computer engineer and developer from Sorocaba, Brazil, writing about science, technology, code and Spider-Man. Available for writing work and collaborations." },
+      { property: "og:title", content: "Vic Mariucha – Science Writer & Freelance Developer Writer" },
+      { name: "twitter:title", content: "Vic Mariucha – Science Writer & Freelance Developer Writer" },
+      { property: "og:description", content: "Freelance science writer and developer writer turning research on space, health, environment and technology into clear, engaging English." },
+      { name: "twitter:description", content: "Freelance science writer and developer writer turning research on space, health, environment and technology into clear, engaging English." },
+
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/33d7d032-00b3-411f-844b-24d0ae79bea5/id-preview-088be265--5acebda7-6162-4cc0-861d-c38349d13e7b.lovable.app-1785895597859.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/33d7d032-00b3-411f-844b-24d0ae79bea5/id-preview-088be265--5acebda7-6162-4cc0-861d-c38349d13e7b.lovable.app-1785895597859.png" },
     ],
