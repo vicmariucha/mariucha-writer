@@ -42,7 +42,7 @@ function Index() {
           <em className="italic text-terracotta">actually finish reading</em>.
         </h1>
         <p className="animate-fade-in mt-8 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-          Hi, I'm VicMariucha – computer engineer, developer, professional over-explainer of
+          Hi, I'm Vic Mariucha – computer engineer, developer, professional over-explainer of
           any topic you can imagine, and, in my free time, an extremely committed Spider-Man fan. I
           write about science, technology, space, environment, and the parts of science that make
           you say "wait, really?"
@@ -103,10 +103,10 @@ function Index() {
               because knowing how things work is useless if nobody understands the explanation.
             </p>
             <p className="mt-6 max-w-2xl leading-relaxed text-muted-foreground">
-              Day to day I build software. The rest of the time I read papers I have no professional
-              obligation to read, then translate them into plain English (or Portuguese, my mother
-              language) – with jokes, because a well-placed joke is the cheapest way to keep a reader
-              past paragraph three.
+              By day, I build software. By choice, I read academic papers I have no professional
+              obligation to read – and translate them into plain English or Portuguese, my native
+              language. I always add a bit of humor, because a well-placed joke is the cheapest way
+              to keep a reader past paragraph three.
             </p>
             <Link
               to="/about"

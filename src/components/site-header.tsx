@@ -17,7 +17,7 @@ export function SiteHeader() {
       <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-5 py-4 sm:px-8">
         <Link to="/" className="min-w-0" onClick={() => setOpen(false)}>
           <span className="block truncate font-display text-lg tracking-tight sm:text-xl">
-            VicMariucha
+            Vic Mariucha
           </span>
           <span className="eyebrow block">Writer · Computer Engineer · Developer</span>
         </Link>
