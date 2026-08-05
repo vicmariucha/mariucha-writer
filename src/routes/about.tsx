@@ -126,6 +126,7 @@ function AboutPage() {
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
               to="/contact"
+              search={{ intent: "hire" }}
               className="inline-flex items-center gap-2 rounded-full border border-terracotta/50 px-6 py-3 text-sm text-terracotta transition-colors duration-300 hover:bg-terracotta/8"
             >
               Work with me
