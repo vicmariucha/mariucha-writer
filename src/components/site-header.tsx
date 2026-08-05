@@ -60,11 +60,12 @@ export function SiteHeader() {
               key={l.to}
               to={l.to}
               onClick={() => setOpen(false)}
-              className="flex items-center justify-between border-b border-border/60 py-3 font-display text-2xl text-muted-foreground"
+              className="group flex items-center justify-between border-b border-border/60 py-3 font-display text-2xl text-muted-foreground"
               activeProps={{ className: "text-terracotta" }}
             >
               {l.label}
-              <span className="h-1.5 w-1.5 rounded-full bg-terracotta opacity-0 data-[active]:opacity-100" />
+              <span className="h-1.5 w-1.5 rounded-full bg-terracotta opacity-0 transition-opacity group-data-[status=active]:opacity-100" />
+
             </Link>
           ))}
 
