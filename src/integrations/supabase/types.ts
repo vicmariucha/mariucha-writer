@@ -233,7 +233,44 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      comments_public: {
+        Row: {
+          body: string | null
+          created_at: string | null
+          id: string | null
+          name: string | null
+          post_id: string | null
+          replied_at: string | null
+          reply_body: string | null
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string | null
+          id?: string | null
+          name?: string | null
+          post_id?: string | null
+          replied_at?: string | null
+          reply_body?: string | null
+        }
+        Update: {
+          body?: string | null
+          created_at?: string | null
+          id?: string | null
+          name?: string | null
+          post_id?: string | null
+          replied_at?: string | null
+          reply_body?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       has_role: {

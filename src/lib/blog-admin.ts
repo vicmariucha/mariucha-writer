@@ -110,13 +110,11 @@ export type AdminComment = {
 };
 
 export async function fetchAdminComments(): Promise<AdminComment[]> {
-  const { data, error } = await supabase
-    .from("comments")
-    .select("id, post_id, name, email, body, reply_body, replied_at, reply_notified_at, created_at, posts(title, slug)")
-    .order("created_at", { ascending: false });
-  if (error) throw error;
+  const { listAdminComments } = await import("@/lib/site.functions");
+  const data = await listAdminComments();
   return (data ?? []) as unknown as AdminComment[];
 }
+
 
 export const adminCommentsQuery = queryOptions({
   queryKey: ["comments", "admin"],

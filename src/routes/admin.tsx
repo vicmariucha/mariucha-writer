@@ -16,6 +16,8 @@ import { useEffect, useRef, useState } from "react";
 import { RichTextEditor } from "@/components/rich-text-editor";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { ownerExists as ownerExistsFn } from "@/lib/site.functions";
+
 import {
   adminPostsQuery,
   formatDate,
@@ -121,9 +123,14 @@ function AuthScreen() {
 
   useEffect(() => {
     let active = true;
-    void supabase.rpc("owner_exists").then(({ data }) => {
-      if (active) setOwnerExists(data !== false);
-    });
+    void ownerExistsFn()
+      .then(({ exists }) => {
+        if (active) setOwnerExists(exists);
+      })
+      .catch(() => {
+        if (active) setOwnerExists(true);
+      });
+
     return () => {
       active = false;
     };
