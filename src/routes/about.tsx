@@ -27,7 +27,7 @@ export const Route = createFileRoute("/about")({
 });
 
 const credentials = [
-  { k: "B.Eng, Computer Engineering", v: "Plus a physics elective I took entirely for fun", c: "border-cobalt/60" },
+  { k: "B.Eng, Computer Engineering", v: "Plus an exchange program in Guarda, Portugal that was genuinely awesome", c: "border-cobalt/60" },
   { k: "Software Developer", v: "Shipping code that mostly behaves in production", c: "border-accent/60" },
   { k: "Science & Tech Obsessive", v: "Reads papers recreationally. It's a whole thing.", c: "border-amber/70" },
   { k: "Certified Spider-Man Apologist", v: "Will defend the 2012 movie in any technical review", c: "border-terracotta/60" },
