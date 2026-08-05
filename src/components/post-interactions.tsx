@@ -1,6 +1,7 @@
 import { Heart, Link2, Linkedin, MessageCircle, Twitter, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { incrementPostLikes, incrementPostViews } from "@/lib/site.functions";
+
 
 export function PostInteractions({
   slug,
