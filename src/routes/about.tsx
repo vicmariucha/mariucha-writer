@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Download, ArrowRight, MapPin, Sparkles } from "lucide-react";
-import authorPhoto from "@/assets/author.jpg";
+import authorPhoto from "@/assets/author-photo.png.asset.json";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -48,10 +48,8 @@ function AboutPage() {
         <div>
           <div className="overflow-hidden border border-border bg-linear-to-br from-terracotta/15 to-cobalt/15">
             <img
-              src={authorPhoto}
+              src={authorPhoto.url}
               alt="Portrait of Victória Mariucha, computer engineer and writer"
-              width={912}
-              height={1104}
               className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.03]"
             />
           </div>
@@ -83,6 +81,12 @@ function AboutPage() {
               without the gatekeeping, space because it's space. The tone is friendly, the facts are
               checked twice, and there is usually at least one joke – I consider that a professional
               standard, not a personality flaw.
+            </p>
+            <p>
+              Editorial disclosure: I love a dash. Long ones, short ones, ones that hold a sentence
+              together with pure confidence – and no, an AI did not put them there. I was doing this
+              back when autocomplete could barely finish my name, and I refuse to give up my
+              favourite punctuation just because a language model developed the same taste.
             </p>
             <p className="inline-flex items-start gap-2">
               <Sparkles className="mt-1 h-4 w-4 shrink-0 text-amber" />
