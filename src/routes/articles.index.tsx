@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Search } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ArticleCard } from "@/components/article-card";
 import { postsQuery } from "@/lib/blog";
