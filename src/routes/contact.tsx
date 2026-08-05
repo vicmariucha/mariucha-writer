@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Check, Mail, MapPin } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { LocalTime } from "@/components/local-time";
+import { DeveloperCTA } from "@/components/developer-cta";
 
 export const Route = createFileRoute("/contact")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -143,6 +144,8 @@ function ContactPage() {
           )}
         </div>
       </div>
+
+      <DeveloperCTA />
     </section>
   );
 }

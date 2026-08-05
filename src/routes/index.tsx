@@ -57,6 +57,8 @@ function Index() {
           </Link>
           <Link
             to="/contact"
+            search={{ intent: undefined }}
+
             className="inline-flex items-center gap-2 rounded-full border border-cobalt/50 px-7 py-3 text-sm text-cobalt transition-all duration-300 hover:bg-cobalt/8"
           >
             Get in Touch
