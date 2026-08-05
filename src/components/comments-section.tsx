@@ -102,9 +102,16 @@ export function CommentsSection({ postId }: { postId: string }) {
               })}
             </p>
             <p className="mt-3 whitespace-pre-line leading-relaxed text-muted-foreground">{c.body}</p>
+            {c.reply_body && (
+              <div className="mt-4 rounded-sm border border-accent/30 bg-accent/5 p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-accent">Vic replied</p>
+                <p className="mt-2 whitespace-pre-line text-sm leading-relaxed">{c.reply_body}</p>
+              </div>
+            )}
           </li>
         ))}
       </ul>
+
     </section>
   );
 }

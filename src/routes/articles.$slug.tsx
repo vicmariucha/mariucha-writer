@@ -3,7 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { CommentsSection } from "@/components/comments-section";
 import { PostInteractions } from "@/components/post-interactions";
-import { formatDate, postQuery, postsQuery, readTime, toneFor } from "@/lib/blog";
+import { formatDate, postQuery, postsQuery, readTime, tagVisual } from "@/lib/blog";
 
 export const Route = createFileRoute("/articles/$slug")({
   loader: async ({ context, params }) => {
@@ -65,7 +65,6 @@ function ArticlePage() {
 
   if (!article) return <ArticleNotFound />;
 
-  const tone = toneFor(article.tags?.color);
   const idx = posts.findIndex((a) => a.slug === article.slug);
   const next = posts[(idx + 1) % posts.length];
 
@@ -80,11 +79,21 @@ function ArticlePage() {
       </Link>
 
       <div className="mt-8" />
-      {article.tags && (
-        <span className={`inline-block rounded-full border px-3 py-1 text-[0.65rem] uppercase tracking-[0.18em] ${tone}`}>
-          {article.tags.name}
-        </span>
-      )}
+      <div className="flex flex-wrap gap-2">
+        {article.tagList.map((t) => {
+          const v = tagVisual(t.color);
+          return (
+            <span
+              key={t.id}
+              style={v.style}
+              className={`inline-block rounded-full border px-3 py-1 text-[0.65rem] uppercase tracking-[0.18em] ${v.className}`}
+            >
+              {t.name}
+            </span>
+          );
+        })}
+      </div>
+
 
       <h1 className="mt-5 font-display text-[2.2rem] leading-[1.1] sm:text-5xl">{article.title}</h1>
 

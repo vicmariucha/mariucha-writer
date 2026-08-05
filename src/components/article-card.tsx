@@ -1,9 +1,9 @@
 import { ArrowUpRight, Eye, Heart } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { formatDate, readTime, toneFor, type Post } from "@/lib/blog";
+import { formatDate, readTime, tagVisual, type Post } from "@/lib/blog";
 
 export function ArticleCard({ article, index }: { article: Post; index?: number }) {
-  const tone = toneFor(article.tags?.color);
+
 
   return (
     <Link
@@ -21,12 +21,22 @@ export function ArticleCard({ article, index }: { article: Post; index?: number 
             className="mb-6 aspect-[16/9] w-full rounded-sm object-cover"
           />
         )}
-        <div className="flex items-center justify-between gap-4">
-          {article.tags && (
-            <span className={`rounded-full border px-3 py-1 text-[0.65rem] uppercase tracking-[0.18em] ${tone}`}>
-              {article.tags.name}
-            </span>
-          )}
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-wrap gap-2">
+            {article.tagList.map((t) => {
+              const v = tagVisual(t.color);
+              return (
+                <span
+                  key={t.id}
+                  style={v.style}
+                  className={`rounded-full border px-3 py-1 text-[0.65rem] uppercase tracking-[0.18em] ${v.className}`}
+                >
+                  {t.name}
+                </span>
+              );
+            })}
+          </div>
+
           {typeof index === "number" && (
             <span className="font-display text-sm text-muted-foreground">
               {String(index + 1).padStart(2, "0")}

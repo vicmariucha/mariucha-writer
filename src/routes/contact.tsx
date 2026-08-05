@@ -3,6 +3,7 @@ import { Check, Mail, MapPin } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { LocalTime } from "@/components/local-time";
 import { DeveloperCTA } from "@/components/developer-cta";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/contact")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -35,11 +36,33 @@ const socials = [
 function ContactPage() {
   const { intent } = Route.useSearch();
   const [sent, setSent] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    const payload = {
+      name: String(data.get("name") ?? "").trim(),
+      email: String(data.get("email") ?? "").trim(),
+      subject: String(data.get("subject") ?? "").trim(),
+      message: String(data.get("message") ?? "").trim(),
+    };
+    if (!payload.name || !/\S+@\S+\.\S+/.test(payload.email) || !payload.message) {
+      setError("Please fill in your name, a valid email and a message.");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    const { error: err } = await supabase.from("contact_messages").insert(payload);
+    setBusy(false);
+    if (err) {
+      setError("Something went wrong sending that. Try emailing me directly?");
+      return;
+    }
     setSent(true);
   }
+
 
   return (
     <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
@@ -134,12 +157,15 @@ function ContactPage() {
                   className="w-full resize-none border-b border-border bg-transparent pb-2 text-sm outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-cobalt"
                 />
               </div>
+              {error && <p className="text-sm text-destructive">{error}</p>}
               <button
                 type="submit"
-                className="w-full rounded-full bg-foreground py-3.5 text-sm text-background transition-all duration-300 hover:bg-terracotta hover:shadow-elevate"
+                disabled={busy}
+                className="w-full rounded-full bg-foreground py-3.5 text-sm text-background transition-all duration-300 hover:bg-terracotta hover:shadow-elevate disabled:opacity-50"
               >
-                Send message
+                {busy ? "Sending…" : "Send message"}
               </button>
+
             </form>
           )}
         </div>

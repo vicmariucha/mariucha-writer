@@ -1,4 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
+import type { CSSProperties } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export type Tag = {
@@ -19,14 +20,28 @@ export type Post = {
   tag_id: string | null;
   publication: string;
   published: boolean;
+  featured: boolean;
   published_at: string;
   views: number;
   likes: number;
   tags?: Tag | null;
+  tagList: Tag[];
 };
 
 const POST_COLUMNS =
-  "id, slug, title, excerpt, body_html, cover_image_url, cover_image_alt, tag_id, publication, published, published_at, views, likes, tags(id, name, slug, color)";
+  "id, slug, title, excerpt, body_html, cover_image_url, cover_image_alt, tag_id, publication, published, featured, published_at, views, likes, tags(id, name, slug, color), post_tags(tags(id, name, slug, color))";
+
+type RawPost = Omit<Post, "tagList"> & {
+  post_tags?: { tags: Tag | null }[] | null;
+};
+
+function normalize(rows: unknown): Post[] {
+  return ((rows ?? []) as RawPost[]).map((row) => {
+    const linked = (row.post_tags ?? []).map((l) => l.tags).filter(Boolean) as Tag[];
+    const tagList = linked.length > 0 ? linked : row.tags ? [row.tags] : [];
+    return { ...row, tagList, tags: tagList[0] ?? null } as Post;
+  });
+}
 
 export const tagTone: Record<string, string> = {
   cobalt: "text-cobalt border-cobalt/40 bg-cobalt/8",
@@ -39,8 +54,27 @@ export const tagTone: Record<string, string> = {
 
 export const tagColorOptions = Object.keys(tagTone);
 
+/** A stored colour is either a preset token, a hex value, or "#hex|Custom name". */
+export function parseColor(color?: string | null) {
+  const value = color ?? "accent";
+  const [raw, label] = value.split("|");
+  const hex = raw?.startsWith("#") ? raw : null;
+  return { raw: raw ?? "accent", hex, label: label ?? (hex ? "Custom" : (raw ?? "accent")) };
+}
+
 export function toneFor(color?: string | null) {
-  return tagTone[color ?? "accent"] ?? tagTone["accent"]!;
+  const { raw } = parseColor(color);
+  return tagTone[raw] ?? tagTone["accent"]!;
+}
+
+/** Class name + inline style so preset tokens and custom hex colours both render. */
+export function tagVisual(color?: string | null): { className: string; style?: CSSProperties } {
+  const { hex } = parseColor(color);
+  if (!hex) return { className: toneFor(color) };
+  return {
+    className: "",
+    style: { color: hex, borderColor: `${hex}66`, backgroundColor: `${hex}14` },
+  };
 }
 
 export function formatDate(value: string) {
@@ -76,9 +110,10 @@ export async function fetchPublishedPosts(): Promise<Post[]> {
     .from("posts")
     .select(POST_COLUMNS)
     .eq("published", true)
+    .lte("published_at", new Date().toISOString())
     .order("published_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as unknown as Post[];
+  return normalize(data);
 }
 
 export async function fetchPostBySlug(slug: string): Promise<Post | null> {
@@ -87,9 +122,10 @@ export async function fetchPostBySlug(slug: string): Promise<Post | null> {
     .select(POST_COLUMNS)
     .eq("slug", slug)
     .eq("published", true)
+    .lte("published_at", new Date().toISOString())
     .maybeSingle();
   if (error) throw error;
-  return (data as unknown as Post) ?? null;
+  return normalize(data ? [data] : [])[0] ?? null;
 }
 
 export async function fetchAllPostsForAdmin(): Promise<Post[]> {
@@ -98,7 +134,7 @@ export async function fetchAllPostsForAdmin(): Promise<Post[]> {
     .select(POST_COLUMNS)
     .order("published_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as unknown as Post[];
+  return normalize(data);
 }
 
 export async function fetchTags(): Promise<Tag[]> {
@@ -112,13 +148,15 @@ export type Comment = {
   post_id: string;
   name: string;
   body: string;
+  reply_body: string | null;
+  replied_at: string | null;
   created_at: string;
 };
 
 export async function fetchComments(postId: string): Promise<Comment[]> {
   const { data, error } = await supabase
     .from("comments")
-    .select("id, post_id, name, body, created_at")
+    .select("id, post_id, name, body, reply_body, replied_at, created_at")
     .eq("post_id", postId)
     .order("created_at", { ascending: false });
   if (error) throw error;
