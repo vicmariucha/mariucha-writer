@@ -79,15 +79,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Victória Mariucha – Computer Engineer & Science Writer" },
+      { title: "Victória Mariucha – Science Writer" },
       {
         name: "description",
         content:
-          "Victória Mariucha, computer engineer and developer from Sorocaba, Brazil, writing about science, technology, code and Spider-Man.",
+          "Computer engineer and developer from Sorocaba, Brazil, writing about science, technology, code and Spider-Man. Available for writing work and collaborations.",
       },
       { name: "author", content: "Victória Mariucha" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:title", content: "Victória Mariucha – Science Writer" },
+      { name: "twitter:title", content: "Victória Mariucha – Science Writer" },
+      { property: "og:description", content: "Computer engineer and developer from Sorocaba, Brazil, writing about science, technology, code and Spider-Man. Available for writing work and collaborations." },
+      { name: "twitter:description", content: "Computer engineer and developer from Sorocaba, Brazil, writing about science, technology, code and Spider-Man. Available for writing work and collaborations." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/33d7d032-00b3-411f-844b-24d0ae79bea5/id-preview-088be265--5acebda7-6162-4cc0-861d-c38349d13e7b.lovable.app-1785895597859.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/33d7d032-00b3-411f-844b-24d0ae79bea5/id-preview-088be265--5acebda7-6162-4cc0-861d-c38349d13e7b.lovable.app-1785895597859.png" },
     ],
     links: [
       {

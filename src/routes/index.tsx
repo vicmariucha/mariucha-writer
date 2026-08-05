@@ -6,7 +6,7 @@ import { articles } from "@/data/articles";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Victória Mariucha – Computer Engineer & Science Writer" },
+      { title: "Victória Mariucha – Science Writer" },
       {
         name: "description",
         content:
@@ -14,12 +14,12 @@ export const Route = createFileRoute("/")({
       },
       {
         property: "og:title",
-        content: "Victória Mariucha – Computer Engineer & Science Writer",
+        content: "Victória Mariucha – Science Writer",
       },
       {
         property: "og:description",
         content:
-          "Turning complex science and technology into stories people actually finish reading. Based in Sorocaba, Brazil.",
+          "Computer engineer and developer from Sorocaba, Brazil, writing about science, technology, code and Spider-Man. Available for writing work and collaborations.",
       },
     ],
   }),
