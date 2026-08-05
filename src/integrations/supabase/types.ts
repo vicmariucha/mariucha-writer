@@ -174,6 +174,7 @@ export type Database = {
       }
       increment_post_views: { Args: { _slug: string }; Returns: number }
       is_admin: { Args: never; Returns: boolean }
+      owner_exists: { Args: never; Returns: boolean }
     }
     Enums: {
       app_role: "admin"

@@ -95,13 +95,26 @@ function AuthScreen() {
   const [mode, setMode] = useState<"in" | "up">("in");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [ownerExists, setOwnerExists] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    void supabase.rpc("owner_exists").then(({ data }) => {
+      if (active) setOwnerExists(data !== false);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const canClaim = ownerExists === false;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     setError(null);
     const fn =
-      mode === "in"
+      mode === "in" || !canClaim
         ? supabase.auth.signInWithPassword({ email, password })
         : supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.href } });
     const { error: err } = await fn;
@@ -140,19 +153,26 @@ function AuthScreen() {
           disabled={busy}
           className="w-full rounded-full bg-foreground px-6 py-2.5 text-sm text-background transition-colors hover:bg-accent disabled:opacity-40"
         >
-          {busy ? "…" : mode === "in" ? "Sign in" : "Create account"}
+          {busy ? "…" : mode === "in" || !canClaim ? "Sign in" : "Create owner account"}
         </button>
       </form>
-      <button
-        type="button"
-        onClick={() => setMode(mode === "in" ? "up" : "in")}
-        className="link-underline mt-6 text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground"
-      >
-        {mode === "in" ? "First time? Create the owner account" : "Already have an account? Sign in"}
-      </button>
+      {canClaim ? (
+        <button
+          type="button"
+          onClick={() => setMode(mode === "in" ? "up" : "in")}
+          className="link-underline mt-6 text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground"
+        >
+          {mode === "in" ? "First time? Create the owner account" : "Already have an account? Sign in"}
+        </button>
+      ) : (
+        <p className="mt-6 text-xs uppercase tracking-[0.18em] text-muted-foreground">
+          Owner account only — no sign-ups
+        </p>
+      )}
     </section>
   );
 }
+
 
 function emptyPost(): PostInput {
   return {
