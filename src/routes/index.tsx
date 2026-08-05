@@ -26,11 +26,14 @@ export const Route = createFileRoute("/")({
       },
     ],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(postsQuery),
   component: Index,
 });
 
 function Index() {
-  const featured = articles.filter((a) => a.featured);
+  const { data: posts } = useSuspenseQuery(postsQuery);
+  const featured = posts.slice(0, 3);
+
 
   return (
     <>
