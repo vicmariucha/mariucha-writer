@@ -155,13 +155,14 @@ export type Comment = {
 
 export async function fetchComments(postId: string): Promise<Comment[]> {
   const { data, error } = await supabase
-    .from("comments")
+    .from("comments_public")
     .select("id, post_id, name, body, reply_body, replied_at, created_at")
     .eq("post_id", postId)
     .order("created_at", { ascending: false });
   if (error) throw error;
   return (data ?? []) as Comment[];
 }
+
 
 export const postsQuery = queryOptions({
   queryKey: ["posts", "published"],
