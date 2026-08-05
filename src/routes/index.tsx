@@ -6,7 +6,7 @@ import { articles } from "@/data/articles";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Victória Mariucha — Computer Engineer & Science Writer" },
+      { title: "Victória Mariucha – Computer Engineer & Science Writer" },
       {
         name: "description",
         content:
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
       },
       {
         property: "og:title",
-        content: "Victória Mariucha — Computer Engineer & Science Writer",
+        content: "Victória Mariucha – Computer Engineer & Science Writer",
       },
       {
         property: "og:description",
@@ -41,7 +41,7 @@ function Index() {
           <em className="italic text-terracotta">actually finish reading</em>.
         </h1>
         <p className="animate-fade-in mt-8 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-          Hi, I'm Victória Mariucha — computer engineer, developer, professional over-explainer of
+          Hi, I'm Victória Mariucha – computer engineer, developer, professional over-explainer of
           technology, and, in my free time, an extremely committed Spider-Man fan. I write about
           code, AI, space and the parts of science that make you say "wait, really?"
         </p>
@@ -63,7 +63,7 @@ function Index() {
 
         <dl className="mt-20 grid gap-8 border-t border-border pt-8 sm:grid-cols-3">
           {[
-            { k: "0", v: "Articles published by a major outlet (yet — your move)", c: "text-terracotta" },
+            { k: "0", v: "Articles published by a major outlet (yet – your move)", c: "text-terracotta" },
             { k: "∞", v: "Tabs open while researching a single paragraph", c: "text-cobalt" },
             { k: "B.Eng", v: "Computer Engineering, and a suspicious amount of physics", c: "text-accent" },
           ].map((s) => (
@@ -102,7 +102,7 @@ function Index() {
             </p>
             <p className="mt-6 max-w-2xl leading-relaxed text-muted-foreground">
               Day to day I build software. The rest of the time I read papers I have no professional
-              obligation to read, then translate them into plain English — with jokes, because a
+              obligation to read, then translate them into plain English – with jokes, because a
               well-placed joke is the cheapest way to keep a reader past paragraph three.
             </p>
             <Link

@@ -5,7 +5,7 @@ import authorPhoto from "@/assets/author.jpg";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Victória Mariucha — Engineer, Developer, Science Nerd" },
+      { title: "About Victória Mariucha – Engineer, Developer, Science Nerd" },
       {
         name: "description",
         content:
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/about")({
       },
       {
         property: "og:title",
-        content: "About Victória Mariucha — Engineer, Developer, Science Nerd",
+        content: "About Victória Mariucha – Engineer, Developer, Science Nerd",
       },
       {
         property: "og:description",
@@ -68,7 +68,7 @@ function AboutPage() {
           </h1>
           <div className="mt-8 space-y-5 leading-relaxed text-muted-foreground">
             <p className="text-foreground">
-              I'm Victória — a computer engineer and developer based in Sorocaba, Brazil. I spend my
+              I'm Victória – a computer engineer and developer based in Sorocaba, Brazil. I spend my
               working hours building software and my non-working hours reading about things I will
               never be paid to understand: protein folding, orbital mechanics, why my compiler is
               angry at me specifically.
@@ -81,7 +81,7 @@ function AboutPage() {
             <p>
               My writing sits where science and technology overlap: AI without the hype, code
               without the gatekeeping, space because it's space. The tone is friendly, the facts are
-              checked twice, and there is usually at least one joke — I consider that a professional
+              checked twice, and there is usually at least one joke – I consider that a professional
               standard, not a personality flaw.
             </p>
             <p className="inline-flex items-start gap-2">
@@ -131,7 +131,7 @@ function AboutPage() {
           This space is aggressively, embarrassingly available.
         </p>
         <p className="mt-4 max-w-2xl leading-relaxed text-muted-foreground">
-          No logos here yet — which means the first outlet to publish me gets this whole section to
+          No logos here yet – which means the first outlet to publish me gets this whole section to
           itself, in a lovely large font, forever. Think of it as ground-floor investment in a
           writer who fact-checks obsessively and hits deadlines out of sheer anxiety.
         </p>

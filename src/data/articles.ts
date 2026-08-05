@@ -75,7 +75,7 @@ export const articles: Article[] = [
     slug: "how-a-rocket-decides-to-not-explode",
     title: "How a Rocket Decides Not to Explode",
     excerpt:
-      "Flight software, redundancy and the beautiful paranoia of aerospace engineering — explained by someone whose worst deploy only took down a staging server.",
+      "Flight software, redundancy and the beautiful paranoia of aerospace engineering – explained by someone whose worst deploy only took down a staging server.",
     date: "2026-01-23",
     readTime: "8 min read",
     tag: "Space",
