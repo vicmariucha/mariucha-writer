@@ -76,7 +76,7 @@ function ArticlePage() {
       </p>
 
       <div className="mt-10 space-y-6 text-[1.02rem] leading-[1.85] text-muted-foreground">
-        {article.body.map((p, i) => (
+        {article.body.map((p: string, i: number) => (
           <p key={i} className={i === 0 ? "text-foreground" : undefined}>
             {p}
           </p>
