@@ -1,10 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ArticleCard } from "@/components/article-card";
-import { articles, tags } from "@/data/articles";
+import { postsQuery, tagsQuery } from "@/lib/blog";
 
 export const Route = createFileRoute("/articles/")({
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData(postsQuery),
+      context.queryClient.ensureQueryData(tagsQuery),
+    ]);
+  },
   head: () => ({
     meta: [
       { title: "Articles – Victória Mariucha, Engineer & Science Writer" },
@@ -18,28 +25,37 @@ export const Route = createFileRoute("/articles/")({
         property: "og:description",
         content: "Essays and explainers on code, AI, space, science and one friendly neighborhood superhero.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  errorComponent: ({ error }) => (
+    <p role="alert" className="mx-auto max-w-3xl px-5 py-24 text-center text-muted-foreground">
+      {error.message}
+    </p>
+  ),
   component: ArticlesPage,
 });
 
 function ArticlesPage() {
+  const { data: articles } = useSuspenseQuery(postsQuery);
+  const { data: tags } = useSuspenseQuery(tagsQuery);
   const [active, setActive] = useState<string | null>(null);
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return articles.filter((a) => {
-      const matchTag = !active || a.tag === active;
+      const matchTag = !active || a.tags?.name === active;
       const matchQuery =
         !q ||
         a.title.toLowerCase().includes(q) ||
         a.excerpt.toLowerCase().includes(q) ||
         a.publication.toLowerCase().includes(q) ||
-        a.tag.toLowerCase().includes(q);
+        (a.tags?.name ?? "").toLowerCase().includes(q);
       return matchTag && matchQuery;
     });
-  }, [active, query]);
+  }, [articles, active, query]);
 
   return (
     <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
@@ -52,16 +68,15 @@ function ArticlesPage() {
         (me) probably should have questioned. Filter by topic or search the archive.
       </p>
 
-
       <div className="mt-12 flex flex-col gap-6 border-y border-border py-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-wrap gap-2">
           <FilterTag label="All" active={active === null} onClick={() => setActive(null)} />
           {tags.map((t) => (
             <FilterTag
-              key={t}
-              label={`#${t}`}
-              active={active === t}
-              onClick={() => setActive(active === t ? null : t)}
+              key={t.id}
+              label={`#${t.name}`}
+              active={active === t.name}
+              onClick={() => setActive(active === t.name ? null : t.name)}
             />
           ))}
         </div>
