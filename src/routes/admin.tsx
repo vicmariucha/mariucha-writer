@@ -16,6 +16,8 @@ import { useEffect, useRef, useState } from "react";
 import { RichTextEditor } from "@/components/rich-text-editor";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { ownerExists as ownerExistsFn } from "@/lib/site.functions";
+
 import {
   adminPostsQuery,
   formatDate,
