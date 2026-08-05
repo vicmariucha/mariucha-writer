@@ -11,19 +11,25 @@ export const Route = createFileRoute("/contact")({
   }),
   head: () => ({
     meta: [
-      { title: "Contact Victória Mariucha – Let's Work Together" },
+      { title: "Hire a Freelance Science Writer – Contact Vic Mariucha" },
       {
         name: "description",
         content:
-          "Commissions, collaborations, pitches or just a good science argument. Email vicmariucha@gmail.com – based in Sorocaba, Brazil (UTC−3).",
+          "Hire a freelance science writer and developer writer. Commissions, collaborations and pitches welcome – email vicmariucha@gmail.com, based in Sorocaba, Brazil (UTC−3).",
       },
-      { property: "og:title", content: "Contact Victória Mariucha – Let's Work Together" },
+      { property: "og:title", content: "Hire a Freelance Science Writer – Contact Vic Mariucha" },
       {
         property: "og:description",
-        content: "Freelance writing, collaborations and pitches welcome. Sorocaba, Brazil (UTC−3).",
+        content:
+          "Freelance science and technology writing, collaborations and pitches welcome. Sorocaba, Brazil (UTC−3).",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://mariucha-writer.lovable.app/contact" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://mariucha-writer.lovable.app/contact" }],
   }),
+
   component: ContactPage,
 });
 

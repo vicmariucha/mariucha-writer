@@ -7,23 +7,28 @@ import { DeveloperCTA } from "@/components/developer-cta";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Victória Mariucha – Engineer, Developer, Science Nerd" },
+      { title: "About Vic Mariucha – Science Writer & Computer Engineer" },
       {
         name: "description",
         content:
-          "Computer engineer and developer based in Sorocaba, Brazil. I build software, write about science and technology, and defend Spider-Man in any argument.",
+          "About Vic Mariucha: computer engineer, developer and freelance science writer in Sorocaba, Brazil, covering space, health, environment and technology in plain English.",
       },
       {
         property: "og:title",
-        content: "About Victória Mariucha – Engineer, Developer, Science Nerd",
+        content: "About Vic Mariucha – Science Writer & Computer Engineer",
       },
       {
         property: "og:description",
         content:
-          "Computer engineer and developer from Sorocaba, Brazil, writing about science, code and friendly neighborhood superheroes.",
+          "Computer engineer, developer and freelance science writer covering space, health, environment and technology.",
       },
+      { property: "og:type", content: "profile" },
+      { property: "og:url", content: "https://mariucha-writer.lovable.app/about" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://mariucha-writer.lovable.app/about" }],
   }),
+
   component: AboutPage,
 });
 

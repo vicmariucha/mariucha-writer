@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Search } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ArticleCard } from "@/components/article-card";
 import { postsQuery } from "@/lib/blog";
@@ -12,21 +12,25 @@ export const Route = createFileRoute("/articles/")({
 
   head: () => ({
     meta: [
-      { title: "Articles – Victória Mariucha, Engineer & Science Writer" },
+      { title: "Articles by Vic Mariucha – Science & Technology Writing" },
       {
         name: "description",
         content:
-          "Essays and explainers on code, AI, space, science and Spider-Man by Victória Mariucha. Filter by topic or search by keyword.",
+          "Science writing portfolio: essays and explainers on space, health, environment, AI and code by freelance science writer Vic Mariucha. Filter by topic or search.",
       },
-      { property: "og:title", content: "Articles – Victória Mariucha, Engineer & Science Writer" },
+      { property: "og:title", content: "Articles by Vic Mariucha – Science & Technology Writing" },
       {
         property: "og:description",
-        content: "Essays and explainers on code, AI, space, science and one friendly neighborhood superhero.",
+        content:
+          "Essays and explainers on space, health, environment, AI and code by freelance science writer Vic Mariucha.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://mariucha-writer.lovable.app/articles" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://mariucha-writer.lovable.app/articles" }],
   }),
+
   errorComponent: ({ error }) => (
     <p role="alert" className="mx-auto max-w-3xl px-5 py-24 text-center text-muted-foreground">
       {error.message}
@@ -105,16 +109,22 @@ function ArticlesPage() {
           ))}
         </div>
         <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center lg:w-auto">
-          <div className="flex flex-wrap gap-2">
-            {sortOptions.map((o) => (
-              <FilterTag
-                key={o.key}
-                label={o.label}
-                active={sort === o.key}
-                onClick={() => setSort(o.key)}
-              />
-            ))}
+          <div className="relative w-full sm:w-52">
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortKey)}
+              aria-label="Sort articles"
+              className="w-full appearance-none rounded-full border border-border bg-card py-2.5 pl-4 pr-10 text-sm outline-none transition-colors hover:border-foreground/40 focus:border-accent"
+            >
+              {sortOptions.map((o) => (
+                <option key={o.key} value={o.key}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           </div>
+
           <div className="relative w-full lg:max-w-xs">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
