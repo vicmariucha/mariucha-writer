@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Download, ArrowRight, MapPin, Sparkles } from "lucide-react";
+import { ArrowRight, MapPin, Sparkles } from "lucide-react";
 import authorPhoto from "@/assets/author-photo.png.asset.json";
 
 export const Route = createFileRoute("/about")({
