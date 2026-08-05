@@ -34,7 +34,7 @@ function Index() {
       <section className="mx-auto max-w-6xl px-5 pb-20 pt-16 sm:px-8 sm:pt-24">
         <p className="eyebrow animate-fade-in inline-flex items-center gap-2">
           <MapPin className="h-3.5 w-3.5 text-accent" />
-          Sorocaba, Brazil · UTC−3 · replies before the coffee gets cold
+          Sorocaba, Brazil · UTC−3
         </p>
         <h1 className="animate-fade-in mt-6 max-w-4xl font-display text-[2.6rem] leading-[1.05] sm:text-6xl lg:text-7xl">
           I turn complicated science into things people{" "}
@@ -42,8 +42,9 @@ function Index() {
         </h1>
         <p className="animate-fade-in mt-8 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
           Hi, I'm Victória Mariucha – computer engineer, developer, professional over-explainer of
-          technology, and, in my free time, an extremely committed Spider-Man fan. I write about
-          code, AI, space and the parts of science that make you say "wait, really?"
+          any topic you can imagine, and, in my free time, an extremely committed Spider-Man fan. I
+          write about science, technology, space, environment, and the parts of science that make
+          you say "wait, really?"
         </p>
         <div className="animate-fade-in mt-10 flex flex-wrap items-center gap-4">
           <Link
@@ -65,7 +66,7 @@ function Index() {
           {[
             { k: "0", v: "Articles published by a major outlet (yet)", c: "text-terracotta" },
             { k: "∞", v: "Tabs open while researching a single paragraph", c: "text-cobalt" },
-            { k: "B.Eng", v: "Computer Engineering, and a suspicious amount of physics", c: "text-accent" },
+            { k: "B.Eng", v: "Computer Engineering", c: "text-accent" },
           ].map((s) => (
             <div key={s.k}>
               <dt className={`font-display text-4xl ${s.c}`}>{s.k}</dt>
@@ -102,8 +103,9 @@ function Index() {
             </p>
             <p className="mt-6 max-w-2xl leading-relaxed text-muted-foreground">
               Day to day I build software. The rest of the time I read papers I have no professional
-              obligation to read, then translate them into plain English – with jokes, because a
-              well-placed joke is the cheapest way to keep a reader past paragraph three.
+              obligation to read, then translate them into plain English (or Portuguese, my mother
+              language) – with jokes, because a well-placed joke is the cheapest way to keep a reader
+              past paragraph three.
             </p>
             <Link
               to="/about"
