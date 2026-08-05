@@ -12,21 +12,25 @@ export const Route = createFileRoute("/articles/")({
 
   head: () => ({
     meta: [
-      { title: "Articles – Victória Mariucha, Engineer & Science Writer" },
+      { title: "Articles by Vic Mariucha – Science & Technology Writing" },
       {
         name: "description",
         content:
-          "Essays and explainers on code, AI, space, science and Spider-Man by Victória Mariucha. Filter by topic or search by keyword.",
+          "Science writing portfolio: essays and explainers on space, health, environment, AI and code by freelance science writer Vic Mariucha. Filter by topic or search.",
       },
-      { property: "og:title", content: "Articles – Victória Mariucha, Engineer & Science Writer" },
+      { property: "og:title", content: "Articles by Vic Mariucha – Science & Technology Writing" },
       {
         property: "og:description",
-        content: "Essays and explainers on code, AI, space, science and one friendly neighborhood superhero.",
+        content:
+          "Essays and explainers on space, health, environment, AI and code by freelance science writer Vic Mariucha.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://mariucha-writer.lovable.app/articles" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://mariucha-writer.lovable.app/articles" }],
   }),
+
   errorComponent: ({ error }) => (
     <p role="alert" className="mx-auto max-w-3xl px-5 py-24 text-center text-muted-foreground">
       {error.message}
