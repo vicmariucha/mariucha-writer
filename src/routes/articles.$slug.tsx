@@ -12,19 +12,27 @@ export const Route = createFileRoute("/articles/$slug")({
       context.queryClient.ensureQueryData(postsQuery),
     ]);
     if (!post) throw notFound();
-    return { title: post.title, excerpt: post.excerpt, image: post.cover_image_url };
+    return {
+      title: post.title,
+      excerpt: post.excerpt,
+      image: post.cover_image_url,
+      slug: post.slug,
+      publishedAt: post.published_at,
+    };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
       return { meta: [{ title: "Unavailable" }, { name: "robots", content: "noindex" }] };
     }
+    const url = `https://mariucha-writer.lovable.app/articles/${loaderData.slug}`;
     return {
       meta: [
-        { title: `${loaderData.title} – Victória Mariucha` },
+        { title: `${loaderData.title} – Vic Mariucha` },
         { name: "description", content: loaderData.excerpt },
         { property: "og:title", content: loaderData.title },
         { property: "og:description", content: loaderData.excerpt },
         { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
         { name: "twitter:card", content: "summary_large_image" },
         ...(loaderData.image?.startsWith("https://")
           ? [
@@ -33,8 +41,25 @@ export const Route = createFileRoute("/articles/$slug")({
             ]
           : []),
       ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: loaderData.title,
+            description: loaderData.excerpt,
+            datePublished: loaderData.publishedAt,
+            mainEntityOfPage: url,
+            ...(loaderData.image?.startsWith("https://") ? { image: loaderData.image } : {}),
+            author: { "@type": "Person", name: "Victória Mariucha" },
+          }),
+        },
+      ],
     };
   },
+
   errorComponent: ({ error }) => (
     <p role="alert" className="mx-auto max-w-3xl px-5 py-24 text-center text-muted-foreground">
       {error.message}
