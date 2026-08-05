@@ -16,8 +16,7 @@ export function SiteFooter() {
         <div>
           <p className="font-display text-2xl">Victória Mariucha</p>
           <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-            Computer engineer and developer writing about science, technology and the occasional
-            radioactive spider. Available for work, collaborations and very nerdy conversations.
+            Available for work, collaborations and very nerdy conversations.
           </p>
           <p className="mt-4 inline-flex items-center gap-2 text-xs text-muted-foreground">
             <MapPin className="h-3.5 w-3.5 text-accent" />
@@ -53,7 +52,7 @@ export function SiteFooter() {
             </Link>
           </div>
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Victória Mariucha. Built with coffee and stubbornness.
+            © {new Date().getFullYear()} Victória Mariucha. Built with curiosity and stubbornness.
           </p>
         </div>
       </div>
