@@ -46,11 +46,11 @@ function AboutPage() {
     <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
       <div className="grid gap-12 md:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] md:gap-16">
         <div>
-          <div className="overflow-hidden border border-border bg-linear-to-br from-terracotta/15 to-cobalt/15">
+          <div className="aspect-4/5 overflow-hidden border border-border bg-linear-to-br from-terracotta/15 to-cobalt/15">
             <img
               src={authorPhoto.url}
               alt="Portrait of Victória Mariucha, computer engineer and writer"
-              className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.03]"
+              className="h-full w-full object-cover object-top transition-transform duration-700 hover:scale-[1.03]"
             />
           </div>
           <p className="mt-4 inline-flex items-center gap-2 text-xs text-muted-foreground">
