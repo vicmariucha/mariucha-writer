@@ -9,23 +9,28 @@ import { postsQuery } from "@/lib/blog";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Victória Mariucha – Science Writer" },
+      { title: "Vic Mariucha – Science Writer & Freelance Developer Writer" },
       {
         name: "description",
         content:
-          "Computer engineer and developer from Sorocaba, Brazil, writing about science, technology, code and Spider-Man. Available for writing work and collaborations.",
+          "Freelance science writer and developer writer. I turn research on space, health, environment and technology into clear English that people actually finish reading.",
       },
       {
         property: "og:title",
-        content: "Victória Mariucha – Science Writer",
+        content: "Vic Mariucha – Science Writer & Freelance Developer Writer",
       },
       {
         property: "og:description",
         content:
-          "Computer engineer and developer from Sorocaba, Brazil, writing about science, technology, code and Spider-Man. Available for writing work and collaborations.",
+          "Freelance science writer and developer writer turning complex research into clear, engaging English.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://mariucha-writer.lovable.app/" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://mariucha-writer.lovable.app/" }],
   }),
+
   loader: ({ context }) => context.queryClient.ensureQueryData(postsQuery),
   component: Index,
 });
