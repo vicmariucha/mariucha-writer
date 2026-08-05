@@ -63,7 +63,7 @@ function Index() {
 
         <dl className="mt-20 grid gap-8 border-t border-border pt-8 sm:grid-cols-3">
           {[
-            { k: "0", v: "Articles published by a major outlet (yet – your move)", c: "text-terracotta" },
+            { k: "0", v: "Articles published by a major outlet (yet)", c: "text-terracotta" },
             { k: "∞", v: "Tabs open while researching a single paragraph", c: "text-cobalt" },
             { k: "B.Eng", v: "Computer Engineering, and a suspicious amount of physics", c: "text-accent" },
           ].map((s) => (

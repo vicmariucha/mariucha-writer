@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { ArticleCard } from "@/components/article-card";
 import { articles, tags } from "@/data/articles";
 
-export const Route = createFileRoute("/articles")({
+export const Route = createFileRoute("/articles/")({
   head: () => ({
     meta: [
       { title: "Articles – Victória Mariucha, Engineer & Science Writer" },
@@ -48,7 +48,7 @@ function ArticlesPage() {
         Articles, essays and <em className="italic text-terracotta">extremely detailed tangents</em>
       </h1>
       <p className="mt-5 max-w-xl leading-relaxed text-muted-foreground">
-        Everything I've written about code, AI, space and science – plus a few pieces my editor
+        Everything I've written, plus a few pieces my editor
         (me) probably should have questioned. Filter by topic or search the archive.
       </p>
 
