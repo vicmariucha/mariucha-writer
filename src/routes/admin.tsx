@@ -121,9 +121,14 @@ function AuthScreen() {
 
   useEffect(() => {
     let active = true;
-    void supabase.rpc("owner_exists").then(({ data }) => {
-      if (active) setOwnerExists(data !== false);
-    });
+    void ownerExistsFn()
+      .then(({ exists }) => {
+        if (active) setOwnerExists(exists);
+      })
+      .catch(() => {
+        if (active) setOwnerExists(true);
+      });
+
     return () => {
       active = false;
     };
