@@ -109,16 +109,22 @@ function ArticlesPage() {
           ))}
         </div>
         <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center lg:w-auto">
-          <div className="flex flex-wrap gap-2">
-            {sortOptions.map((o) => (
-              <FilterTag
-                key={o.key}
-                label={o.label}
-                active={sort === o.key}
-                onClick={() => setSort(o.key)}
-              />
-            ))}
+          <div className="relative w-full sm:w-52">
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortKey)}
+              aria-label="Sort articles"
+              className="w-full appearance-none rounded-full border border-border bg-card py-2.5 pl-4 pr-10 text-sm outline-none transition-colors hover:border-foreground/40 focus:border-accent"
+            >
+              {sortOptions.map((o) => (
+                <option key={o.key} value={o.key}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           </div>
+
           <div className="relative w-full lg:max-w-xs">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
