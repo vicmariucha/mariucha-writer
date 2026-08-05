@@ -59,8 +59,9 @@ function ArticlePage() {
         The archive
       </Link>
 
+      <div className="mt-8" />
       <span
-        className={`mt-8 inline-block rounded-full border px-3 py-1 text-[0.65rem] uppercase tracking-[0.18em] ${tone}`}
+        className={`inline-block rounded-full border px-3 py-1 text-[0.65rem] uppercase tracking-[0.18em] ${tone}`}
       >
         {article.tag}
       </span>
