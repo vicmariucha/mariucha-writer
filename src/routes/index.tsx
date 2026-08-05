@@ -42,7 +42,7 @@ function Index() {
           <em className="italic text-terracotta">actually finish reading</em>.
         </h1>
         <p className="animate-fade-in mt-8 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-          Hi, I'm VicMariucha – computer engineer, developer, professional over-explainer of
+          Hi, I'm Vic Mariucha – computer engineer, developer, professional over-explainer of
           any topic you can imagine, and, in my free time, an extremely committed Spider-Man fan. I
           write about science, technology, space, environment, and the parts of science that make
           you say "wait, really?"
