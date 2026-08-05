@@ -114,9 +114,54 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..600&family=Inter:wght@300;400;500;600&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/favicon.png" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: "Victória Mariucha",
+          alternateName: "Vic Mariucha",
+          url: "https://mariucha-writer.lovable.app",
+          jobTitle: ["Science Writer", "Computer Engineer", "Software Developer"],
+          description:
+            "Freelance science writer and developer writer covering space, health, environment and technology.",
+          address: { "@type": "PostalAddress", addressLocality: "Sorocaba", addressCountry: "BR" },
+          email: "mailto:vicmariucha@gmail.com",
+          knowsAbout: [
+            "science writing",
+            "science communication",
+            "technology writing",
+            "software development",
+            "space",
+            "environment",
+            "health",
+          ],
+          sameAs: [
+            "https://github.com/vicmariucha",
+            "https://www.linkedin.com/in/victoria-mariucha/",
+            "https://substack.com/@vicmariucha",
+            "https://vicmariucha.blogspot.com/",
+            "https://www.instagram.com/ascienceble/",
+          ],
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Vic Mariucha – Science Writer",
+          url: "https://mariucha-writer.lovable.app",
+          inLanguage: "en",
+        }),
+      },
     ],
   }),
+
 
   shellComponent: RootShell,
   component: RootComponent,
