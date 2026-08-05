@@ -157,12 +157,15 @@ function ContactPage() {
                   className="w-full resize-none border-b border-border bg-transparent pb-2 text-sm outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-cobalt"
                 />
               </div>
+              {error && <p className="text-sm text-destructive">{error}</p>}
               <button
                 type="submit"
-                className="w-full rounded-full bg-foreground py-3.5 text-sm text-background transition-all duration-300 hover:bg-terracotta hover:shadow-elevate"
+                disabled={busy}
+                className="w-full rounded-full bg-foreground py-3.5 text-sm text-background transition-all duration-300 hover:bg-terracotta hover:shadow-elevate disabled:opacity-50"
               >
-                Send message
+                {busy ? "Sending…" : "Send message"}
               </button>
+
             </form>
           )}
         </div>
