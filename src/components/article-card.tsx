@@ -1,9 +1,9 @@
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Eye, Heart } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { formatDate, tagColor, type Article } from "@/data/articles";
+import { formatDate, readTime, toneFor, type Post } from "@/lib/blog";
 
-export function ArticleCard({ article, index }: { article: Article; index?: number }) {
-  const tone = tagColor[article.tag] ?? "text-accent border-accent/40 bg-accent/8";
+export function ArticleCard({ article, index }: { article: Post; index?: number }) {
+  const tone = toneFor(article.tags?.color);
 
   return (
     <Link
@@ -13,12 +13,20 @@ export function ArticleCard({ article, index }: { article: Article; index?: numb
     >
       <span className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-linear-to-r from-terracotta via-amber to-cobalt transition-transform duration-500 group-hover:scale-x-100" />
       <div>
+        {article.cover_image_url && (
+          <img
+            src={article.cover_image_url}
+            alt={article.cover_image_alt ?? article.title}
+            loading="lazy"
+            className="mb-6 aspect-[16/9] w-full rounded-sm object-cover"
+          />
+        )}
         <div className="flex items-center justify-between gap-4">
-          <span
-            className={`rounded-full border px-3 py-1 text-[0.65rem] uppercase tracking-[0.18em] ${tone}`}
-          >
-            {article.tag}
-          </span>
+          {article.tags && (
+            <span className={`rounded-full border px-3 py-1 text-[0.65rem] uppercase tracking-[0.18em] ${tone}`}>
+              {article.tags.name}
+            </span>
+          )}
           {typeof index === "number" && (
             <span className="font-display text-sm text-muted-foreground">
               {String(index + 1).padStart(2, "0")}
@@ -32,9 +40,19 @@ export function ArticleCard({ article, index }: { article: Article; index?: numb
       </div>
       <div className="mt-8 flex items-end justify-between gap-4 border-t border-border pt-4">
         <div className="min-w-0 text-xs text-muted-foreground">
-          <p className="truncate italic">{article.publication}</p>
+          {article.publication && <p className="truncate italic">{article.publication}</p>}
           <p className="mt-1">
-            {formatDate(article.date)} · {article.readTime}
+            {formatDate(article.published_at)} · {readTime(article.body_html)}
+          </p>
+          <p className="mt-1 inline-flex items-center gap-3">
+            <span className="inline-flex items-center gap-1">
+              <Eye className="h-3.5 w-3.5" />
+              {article.views}
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <Heart className="h-3.5 w-3.5" />
+              {article.likes}
+            </span>
           </p>
         </div>
         <ArrowUpRight className="h-5 w-5 shrink-0 text-muted-foreground transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-terracotta" />

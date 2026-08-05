@@ -132,3 +132,69 @@
     transparent
   );
 }
+
+/* ---- Rendered article content (public pages + admin editor) ---- */
+.article-body {
+  color: var(--muted-foreground);
+  font-size: 1.02rem;
+  line-height: 1.85;
+}
+.article-body :where(p, ul, ol, blockquote, figure, img, h1, h2, h3, h4) {
+  margin-block: 1.5rem;
+}
+.article-body > :first-child {
+  margin-top: 0;
+}
+.article-body :where(h1, h2, h3, h4) {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+  line-height: 1.2;
+  margin-top: 2.5rem;
+}
+.article-body h1 { font-size: 2.4rem; }
+.article-body h2 { font-size: 1.9rem; }
+.article-body h3 { font-size: 1.5rem; }
+.article-body h4 { font-size: 1.2rem; }
+.article-body strong { color: var(--foreground); font-weight: 600; }
+.article-body em { font-style: italic; }
+.article-body a {
+  color: var(--terracotta);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.article-body a:hover { color: var(--accent); }
+.article-body ul { list-style: disc; padding-left: 1.4rem; }
+.article-body ol { list-style: decimal; padding-left: 1.4rem; }
+.article-body li { margin-block: 0.4rem; }
+.article-body li::marker { color: var(--accent); }
+.article-body blockquote {
+  border-left: 2px solid var(--plum);
+  padding-left: 1.25rem;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  line-height: 1.6;
+  color: var(--foreground);
+  font-style: italic;
+}
+.article-body img {
+  border-radius: 0.25rem;
+  height: auto;
+}
+.article-body img[data-size="small"] { width: 33%; }
+.article-body img[data-size="medium"] { width: 50%; }
+.article-body img[data-size="large"] { width: 75%; }
+.article-body img[data-size="full"] { width: 100%; }
+.article-body img[data-align="center"] { margin-inline: auto; }
+.article-body img[data-align="left"] { margin-inline: 0 auto; }
+.article-body img[data-align="right"] { margin-inline: auto 0; }
+.article-body hr { border-color: var(--border); margin-block: 2.5rem; }
+.article-body .ProseMirror { outline: none; min-height: 18rem; }
+.article-body .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--muted-foreground);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}

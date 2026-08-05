@@ -1,30 +1,45 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { articles, formatDate, tagColor } from "@/data/articles";
+import { CommentsSection } from "@/components/comments-section";
+import { PostInteractions } from "@/components/post-interactions";
+import { formatDate, postQuery, postsQuery, readTime, toneFor } from "@/lib/blog";
 
 export const Route = createFileRoute("/articles/$slug")({
-  loader: ({ params }) => {
-    const article = articles.find((a) => a.slug === params.slug);
-    if (!article) throw notFound();
-    return { article };
+  loader: async ({ context, params }) => {
+    const [post] = await Promise.all([
+      context.queryClient.ensureQueryData(postQuery(params.slug)),
+      context.queryClient.ensureQueryData(postsQuery),
+    ]);
+    if (!post) throw notFound();
+    return { title: post.title, excerpt: post.excerpt, image: post.cover_image_url };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return {
-        meta: [{ title: "Article not found" }, { name: "robots", content: "noindex" }],
-      };
+      return { meta: [{ title: "Unavailable" }, { name: "robots", content: "noindex" }] };
     }
-    const { article } = loaderData;
     return {
       meta: [
-        { title: `${article.title} – Victória Mariucha` },
-        { name: "description", content: article.excerpt },
-        { property: "og:title", content: article.title },
-        { property: "og:description", content: article.excerpt },
+        { title: `${loaderData.title} – Victória Mariucha` },
+        { name: "description", content: loaderData.excerpt },
+        { property: "og:title", content: loaderData.title },
+        { property: "og:description", content: loaderData.excerpt },
         { property: "og:type", content: "article" },
+        { name: "twitter:card", content: "summary_large_image" },
+        ...(loaderData.image?.startsWith("https://")
+          ? [
+              { property: "og:image", content: loaderData.image },
+              { name: "twitter:image", content: loaderData.image },
+            ]
+          : []),
       ],
     };
   },
+  errorComponent: ({ error }) => (
+    <p role="alert" className="mx-auto max-w-3xl px-5 py-24 text-center text-muted-foreground">
+      {error.message}
+    </p>
+  ),
   notFoundComponent: ArticleNotFound,
   component: ArticlePage,
 });
@@ -44,10 +59,15 @@ function ArticleNotFound() {
 }
 
 function ArticlePage() {
-  const { article } = Route.useLoaderData();
-  const tone = tagColor[article.tag] ?? "text-accent border-accent/40 bg-accent/8";
-  const idx = articles.findIndex((a) => a.slug === article.slug);
-  const next = articles[(idx + 1) % articles.length]!;
+  const { slug } = Route.useParams();
+  const { data: article } = useSuspenseQuery(postQuery(slug));
+  const { data: posts } = useSuspenseQuery(postsQuery);
+
+  if (!article) return <ArticleNotFound />;
+
+  const tone = toneFor(article.tags?.color);
+  const idx = posts.findIndex((a) => a.slug === article.slug);
+  const next = posts[(idx + 1) % posts.length];
 
   return (
     <article className="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
@@ -60,43 +80,68 @@ function ArticlePage() {
       </Link>
 
       <div className="mt-8" />
-      <span
-        className={`inline-block rounded-full border px-3 py-1 text-[0.65rem] uppercase tracking-[0.18em] ${tone}`}
-      >
-        {article.tag}
-      </span>
+      {article.tags && (
+        <span className={`inline-block rounded-full border px-3 py-1 text-[0.65rem] uppercase tracking-[0.18em] ${tone}`}>
+          {article.tags.name}
+        </span>
+      )}
 
       <h1 className="mt-5 font-display text-[2.2rem] leading-[1.1] sm:text-5xl">{article.title}</h1>
 
       <p className="mt-5 text-sm text-muted-foreground">
-        {formatDate(article.date)} · {article.readTime} · <em>{article.publication}</em>
+        {formatDate(article.published_at)} · {readTime(article.body_html)}
+        {article.publication ? (
+          <>
+            {" "}
+            · <em>{article.publication}</em>
+          </>
+        ) : null}
       </p>
+
+      {article.cover_image_url && (
+        <img
+          src={article.cover_image_url}
+          alt={article.cover_image_alt ?? article.title}
+          className="mt-8 w-full rounded-sm object-cover"
+        />
+      )}
 
       <p className="mt-8 border-l-2 border-plum/60 pl-5 font-display text-xl leading-relaxed text-foreground sm:text-2xl">
         {article.excerpt}
       </p>
 
-      <div className="mt-10 space-y-6 text-[1.02rem] leading-[1.85] text-muted-foreground">
-        {article.body.map((p: string, i: number) => (
-          <p key={i} className={i === 0 ? "text-foreground" : undefined}>
-            {p}
-          </p>
-        ))}
+      <div
+        className="article-body mt-10"
+        // Content is authored only by the site owner through the admin editor.
+        dangerouslySetInnerHTML={{ __html: article.body_html }}
+      />
+
+      <div className="mt-12">
+        <PostInteractions
+          slug={article.slug}
+          views={article.views}
+          likes={article.likes}
+          title={article.title}
+        />
       </div>
 
-      <div className="mt-16 border-t border-border pt-8">
-        <p className="eyebrow">Read next</p>
-        <Link
-          to="/articles/$slug"
-          params={{ slug: next.slug }}
-          className="group mt-4 flex items-end justify-between gap-6"
-        >
-          <span className="font-display text-2xl leading-snug transition-colors group-hover:text-terracotta sm:text-3xl">
-            {next.title}
-          </span>
-          <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1" />
-        </Link>
-      </div>
+      {next && next.slug !== article.slug && (
+        <div className="mt-16 border-t border-border pt-8">
+          <p className="eyebrow">Read next</p>
+          <Link
+            to="/articles/$slug"
+            params={{ slug: next.slug }}
+            className="group mt-4 flex items-end justify-between gap-6"
+          >
+            <span className="font-display text-2xl leading-snug transition-colors group-hover:text-terracotta sm:text-3xl">
+              {next.title}
+            </span>
+            <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1" />
+          </Link>
+        </div>
+      )}
+
+      <CommentsSection postId={article.id} />
     </article>
   );
 }
