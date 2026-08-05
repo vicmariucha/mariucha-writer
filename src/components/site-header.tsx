@@ -19,7 +19,7 @@ export function SiteHeader() {
           <span className="block truncate font-display text-lg tracking-tight sm:text-xl">
             Victória Mariucha
           </span>
-          <span className="eyebrow block">Computer Engineer · Developer</span>
+          <span className="eyebrow block">Writer · Computer Engineer · Developer</span>
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
