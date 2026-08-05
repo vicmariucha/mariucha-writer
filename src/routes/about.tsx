@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Download, ArrowRight, MapPin, Sparkles } from "lucide-react";
+import { ArrowRight, MapPin, Sparkles } from "lucide-react";
 import authorPhoto from "@/assets/author-photo.png.asset.json";
 
 export const Route = createFileRoute("/about")({
@@ -46,13 +46,14 @@ function AboutPage() {
     <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
       <div className="grid gap-12 md:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] md:gap-16">
         <div>
-          <div className="aspect-4/5 overflow-hidden border border-border bg-linear-to-br from-terracotta/15 to-cobalt/15">
+          <div className="aspect-4/5 overflow-hidden rounded-2xl border border-border bg-linear-to-br from-terracotta/15 to-cobalt/15">
             <img
               src={authorPhoto.url}
               alt="Portrait of Victória Mariucha, computer engineer and writer"
-              className="h-full w-full object-cover object-top transition-transform duration-700 hover:scale-[1.03]"
+              className="h-full w-full rounded-2xl object-cover object-top transition-transform duration-700 hover:scale-[1.03]"
             />
           </div>
+
           <p className="mt-4 inline-flex items-center gap-2 text-xs text-muted-foreground">
             <MapPin className="h-3.5 w-3.5 text-accent" />
             Sorocaba, São Paulo, Brazil · UTC−3
@@ -66,34 +67,47 @@ function AboutPage() {
           </h1>
           <div className="mt-8 space-y-5 leading-relaxed text-muted-foreground">
             <p className="text-foreground">
-              I'm Victória – a computer engineer and developer based in Sorocaba, Brazil. I spend my
-              working hours building software and my non-working hours reading about things I will
-              never be paid to understand: protein folding, orbital mechanics, why my compiler is
-              angry at me specifically.
+              I'm Vic Mariucha – a computer engineer and developer based in Sorocaba, Brazil. I
+              spend my working hours building software and my free time reading and writing about
+              things I will never be paid to understand: dark matter, cell regeneration, how long we
+              have until the environment is furious with us, or why my compiler is angry at me
+              specifically.
             </p>
             <p>
-              Somewhere along the way I realised I enjoy explaining this stuff more than almost
+              Somewhere along the way, I realized I enjoy explaining this stuff more than almost
               anything else. Engineering taught me to break a system down until it makes sense.
-              Writing is the same job with better metaphors and fewer stack traces.
+              Writing is the exact same job, just with better metaphors and more room for
+              creativity.
             </p>
             <p>
-              My writing sits where science and technology overlap: AI without the hype, code
-              without the gatekeeping, space because it's space. The tone is friendly, the facts are
-              checked twice, and there is usually at least one joke – I consider that a professional
-              standard, not a personality flaw.
+              Proudly, writing and science have been part of my life forever. I started my first
+              blog when I was 11 (
+              <a href="#" className="link-underline text-cobalt">
+                check it out here
+              </a>
+              ), and I loved transforming ideas into text even before that. My most special project,
+              aSCIENCEble, was founded alongside a group of incredible people to democratize science
+              and make it accessible to anyone curious enough to learn. While it is currently on
+              pause with no scheduled return, you can still explore the old content{" "}
+              <a href="#" className="link-underline text-cobalt">
+                here
+              </a>{" "}
+              (heads up: it is all in Portuguese).
             </p>
             <p>
-              Editorial disclosure: I love a dash. Long ones, short ones, ones that hold a sentence
-              together with pure confidence – and no, an AI did not put them there. I was doing this
-              back when autocomplete could barely finish my name, and I refuse to give up my
-              favourite punctuation just because a language model developed the same taste.
+              My writing covers science in all its forms. If it smells like real science – not
+              pseudo-scientific nonsense – I am in. The tone is friendly, the facts are checked
+              twice, and there is usually at least one joke (which I consider a professional
+              standard, not a personality flaw). Whether you are 7 or 92 years old, hold two PhDs,
+              or didn't finish high school, I will make sure you can follow along.
             </p>
             <p className="inline-flex items-start gap-2">
               <Sparkles className="mt-1 h-4 w-4 shrink-0 text-amber" />
               <span>
-                Off the clock: Spider-Man. Comics, films, the physics of web-shooters, the whole
-                canon. If your publication needs someone who can cite both a research paper and a
-                1963 issue of Amazing Fantasy, hello.
+                Editorial disclosure: I love a dash. Long ones, short ones, ones that hold a
+                sentence together with pure confidence – and no, an AI did not put them there. I was
+                using em-dashes back when I could barely write my full name, and I refuse to give up
+                my favorite punctuation just because a language model developed the same taste.
               </span>
             </p>
           </div>
@@ -110,22 +124,16 @@ function AboutPage() {
           </div>
 
           <div className="mt-10 flex flex-wrap gap-4">
-            <a
-              href="/cv-victoria-mariucha.pdf"
-              download
-              className="group inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm text-background transition-all duration-300 hover:bg-cobalt hover:shadow-elevate"
-            >
-              <Download className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-0.5" />
-              Download CV
-            </a>
             <Link
               to="/contact"
+              search={{ intent: "hire" }}
               className="inline-flex items-center gap-2 rounded-full border border-terracotta/50 px-6 py-3 text-sm text-terracotta transition-colors duration-300 hover:bg-terracotta/8"
             >
               Work with me
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
+
         </div>
       </div>
 
