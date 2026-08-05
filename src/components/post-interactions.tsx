@@ -27,9 +27,9 @@ export function PostInteractions({
     const key = `viewed:${slug}`;
     if (window.sessionStorage.getItem(key)) return;
     window.sessionStorage.setItem(key, "1");
-    void supabase.rpc("increment_post_views", { _slug: slug }).then(({ error }) => {
-      if (!error) setViewCount((v) => v + 1);
-    });
+    void incrementPostViews({ data: { slug } })
+      .then(() => setViewCount((v) => v + 1))
+      .catch(() => undefined);
   }, [slug]);
 
   async function toggleLike() {
@@ -37,8 +37,9 @@ export function PostInteractions({
     setLiked(!liked);
     setLikeCount((c) => Math.max(0, c + delta));
     window.localStorage.setItem(`liked:${slug}`, liked ? "0" : "1");
-    await supabase.rpc("increment_post_likes", { _slug: slug, _delta: delta });
+    await incrementPostLikes({ data: { slug, delta } }).catch(() => undefined);
   }
+
 
   async function copyLink() {
     await navigator.clipboard.writeText(url);
