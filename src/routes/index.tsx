@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, MapPin } from "lucide-react";
 import { ArticleCard } from "@/components/article-card";
 import { LocalTime } from "@/components/local-time";
-import { articles } from "@/data/articles";
+import { postsQuery } from "@/lib/blog";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
