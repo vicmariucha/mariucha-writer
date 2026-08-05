@@ -37,11 +37,12 @@ export const Route = createFileRoute("/sitemap.xml")({
           for (const row of data ?? []) {
             entries.push({
               path: `/articles/${row.slug}`,
-              lastmod: row.updated_at ? new Date(row.updated_at).toISOString() : undefined,
+              ...(row.updated_at ? { lastmod: new Date(row.updated_at).toISOString() } : {}),
               changefreq: "monthly",
               priority: "0.8",
             });
           }
+
         } catch {
           // Fall back to static routes only.
         }
