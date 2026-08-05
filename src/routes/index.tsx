@@ -103,10 +103,10 @@ function Index() {
               because knowing how things work is useless if nobody understands the explanation.
             </p>
             <p className="mt-6 max-w-2xl leading-relaxed text-muted-foreground">
-              Day to day I build software. The rest of the time I read papers I have no professional
-              obligation to read, then translate them into plain English (or Portuguese, my mother
-              language) – with jokes, because a well-placed joke is the cheapest way to keep a reader
-              past paragraph three.
+              By day, I build software. By choice, I read academic papers I have no professional
+              obligation to read – and translate them into plain English or Portuguese, my native
+              language. I always add a bit of humor, because a well-placed joke is the cheapest way
+              to keep a reader past paragraph three.
             </p>
             <Link
               to="/about"
