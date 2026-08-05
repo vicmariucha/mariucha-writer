@@ -27,12 +27,13 @@ export function SiteHeader() {
             <Link
               key={l.to}
               to={l.to}
-              className="link-underline text-sm text-muted-foreground transition-colors hover:text-terracotta"
-              activeProps={{ className: "text-foreground" }}
+              className="relative pb-1 text-sm text-muted-foreground transition-colors after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-linear-to-r after:from-terracotta after:via-amber after:to-cobalt after:transition-transform after:duration-300 hover:text-terracotta hover:after:scale-x-100"
+              activeProps={{ className: "text-foreground after:scale-x-100" }}
             >
               {l.label}
             </Link>
           ))}
+
           <Link
             to="/contact"
             search={{ intent: "hire" }}
@@ -59,11 +60,14 @@ export function SiteHeader() {
               key={l.to}
               to={l.to}
               onClick={() => setOpen(false)}
-              className="block border-b border-border/60 py-3 font-display text-2xl"
+              className="flex items-center justify-between border-b border-border/60 py-3 font-display text-2xl text-muted-foreground"
+              activeProps={{ className: "text-terracotta" }}
             >
               {l.label}
+              <span className="h-1.5 w-1.5 rounded-full bg-terracotta opacity-0 data-[active]:opacity-100" />
             </Link>
           ))}
+
           <Link
             to="/contact"
             search={{ intent: "hire" }}
