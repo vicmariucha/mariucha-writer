@@ -3,15 +3,13 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ArticleCard } from "@/components/article-card";
-import { postsQuery, tagsQuery } from "@/lib/blog";
+import { postsQuery } from "@/lib/blog";
 
 export const Route = createFileRoute("/articles/")({
   loader: async ({ context }) => {
-    await Promise.all([
-      context.queryClient.ensureQueryData(postsQuery),
-      context.queryClient.ensureQueryData(tagsQuery),
-    ]);
+    await context.queryClient.ensureQueryData(postsQuery);
   },
+
   head: () => ({
     meta: [
       { title: "Articles – Victória Mariucha, Engineer & Science Writer" },
@@ -37,25 +35,51 @@ export const Route = createFileRoute("/articles/")({
   component: ArticlesPage,
 });
 
+type SortKey = "recent" | "oldest" | "featured";
+
+const sortOptions: { key: SortKey; label: string }[] = [
+  { key: "recent", label: "Most recent" },
+  { key: "oldest", label: "Oldest first" },
+  { key: "featured", label: "Featured" },
+];
+
 function ArticlesPage() {
   const { data: articles } = useSuspenseQuery(postsQuery);
-  const { data: tags } = useSuspenseQuery(tagsQuery);
   const [active, setActive] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<SortKey>("recent");
+
+  // Only show tags that actually have at least one published article.
+  const usedTags = useMemo(() => {
+    const map = new Map<string, { name: string; count: number }>();
+    for (const a of articles) {
+      for (const t of a.tagList) {
+        const found = map.get(t.name);
+        map.set(t.name, { name: t.name, count: (found?.count ?? 0) + 1 });
+      }
+    }
+    return [...map.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+  }, [articles]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return articles.filter((a) => {
-      const matchTag = !active || a.tags?.name === active;
+    const list = articles.filter((a) => {
+      const matchTag = !active || a.tagList.some((t) => t.name === active);
       const matchQuery =
         !q ||
         a.title.toLowerCase().includes(q) ||
         a.excerpt.toLowerCase().includes(q) ||
         a.publication.toLowerCase().includes(q) ||
-        (a.tags?.name ?? "").toLowerCase().includes(q);
+        a.tagList.some((t) => t.name.toLowerCase().includes(q));
       return matchTag && matchQuery;
     });
-  }, [articles, active, query]);
+    const byDate = (dir: number) => (a: typeof list[number], b: typeof list[number]) =>
+      dir * (new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
+    if (sort === "oldest") return [...list].sort(byDate(-1));
+    if (sort === "featured")
+      return [...list].sort((a, b) => Number(b.featured) - Number(a.featured) || byDate(1)(a, b));
+    return [...list].sort(byDate(1));
+  }, [articles, active, query, sort]);
 
   return (
     <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
@@ -71,25 +95,37 @@ function ArticlesPage() {
       <div className="mt-12 flex flex-col gap-6 border-y border-border py-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-wrap gap-2">
           <FilterTag label="All" active={active === null} onClick={() => setActive(null)} />
-          {tags.map((t) => (
+          {usedTags.map((t) => (
             <FilterTag
-              key={t.id}
+              key={t.name}
               label={`#${t.name}`}
               active={active === t.name}
               onClick={() => setActive(active === t.name ? null : t.name)}
             />
           ))}
         </div>
-        <div className="relative w-full lg:max-w-xs">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search articles"
-            aria-label="Search articles"
-            className="w-full rounded-full border border-border bg-card py-2.5 pl-10 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-accent"
-          />
+        <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center lg:w-auto">
+          <div className="flex flex-wrap gap-2">
+            {sortOptions.map((o) => (
+              <FilterTag
+                key={o.key}
+                label={o.label}
+                active={sort === o.key}
+                onClick={() => setSort(o.key)}
+              />
+            ))}
+          </div>
+          <div className="relative w-full lg:max-w-xs">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search articles"
+              aria-label="Search articles"
+              className="w-full rounded-full border border-border bg-card py-2.5 pl-10 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-accent"
+            />
+          </div>
         </div>
       </div>
 
@@ -98,6 +134,7 @@ function ArticlesPage() {
           Nothing here. Either I haven't written it yet, or you spelled it creatively.
         </p>
       ) : (
+
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((a, i) => (
             <ArticleCard key={a.slug} article={a} index={i} />

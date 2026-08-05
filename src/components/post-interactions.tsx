@@ -1,4 +1,4 @@
-import { Heart, Link2, Linkedin, Twitter, Eye } from "lucide-react";
+import { Heart, Link2, Linkedin, MessageCircle, Twitter, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -88,6 +88,16 @@ export function PostInteractions({
           className="rounded-full border border-border p-2 text-muted-foreground transition-colors hover:border-cobalt/50 hover:text-cobalt"
         >
           <Linkedin className="h-4 w-4" />
+        </a>
+        <a
+          href={`https://wa.me/?text=${text}%20${share}`}
+          target="_blank"
+          rel="noreferrer"
+          title="Share on WhatsApp"
+          aria-label="Share on WhatsApp"
+          className="rounded-full border border-border p-2 text-muted-foreground transition-colors hover:border-accent/50 hover:text-accent"
+        >
+          <MessageCircle className="h-4 w-4" />
         </a>
         <a
           href={`https://twitter.com/intent/tweet?url=${share}&text=${text}`}

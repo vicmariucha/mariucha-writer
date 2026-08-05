@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { queryOptions } from "@tanstack/react-query";
 import type { Post, Tag } from "@/lib/blog";
 
 const BUCKET = "post-images";
@@ -26,31 +27,54 @@ export type PostInput = {
   body_html: string;
   cover_image_url: string | null;
   cover_image_alt: string | null;
-  tag_id: string | null;
   publication: string;
   published: boolean;
+  featured: boolean;
   published_at: string;
+  tag_ids: string[];
 };
 
-export async function createPost(input: PostInput): Promise<Post> {
-  const { data, error } = await supabase.from("posts").insert(input).select("*").single();
+function toRow(input: PostInput) {
+  const { tag_ids, ...row } = input;
+  return { ...row, tag_id: tag_ids[0] ?? null };
+}
+
+async function syncTags(postId: string, tagIds: string[]) {
+  const { error: delError } = await supabase.from("post_tags").delete().eq("post_id", postId);
+  if (delError) throw delError;
+  if (tagIds.length === 0) return;
+  const { error } = await supabase
+    .from("post_tags")
+    .insert(tagIds.map((tag_id) => ({ post_id: postId, tag_id })));
   if (error) throw error;
+}
+
+export async function createPost(input: PostInput): Promise<Post> {
+  const { data, error } = await supabase.from("posts").insert(toRow(input)).select("*").single();
+  if (error) throw error;
+  await syncTags(data.id, input.tag_ids);
   return data as unknown as Post;
 }
 
 export async function updatePost(id: string, input: PostInput): Promise<Post> {
   const { data, error } = await supabase
     .from("posts")
-    .update(input)
+    .update(toRow(input))
     .eq("id", id)
     .select("*")
     .single();
   if (error) throw error;
+  await syncTags(id, input.tag_ids);
   return data as unknown as Post;
 }
 
 export async function deletePost(id: string): Promise<void> {
   const { error } = await supabase.from("posts").delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function setFeatured(id: string, featured: boolean): Promise<void> {
+  const { error } = await supabase.from("posts").update({ featured }).eq("id", id);
   if (error) throw error;
 }
 
@@ -67,5 +91,88 @@ export async function updateTag(id: string, name: string, slug: string, color: s
 
 export async function deleteTag(id: string): Promise<void> {
   const { error } = await supabase.from("tags").delete().eq("id", id);
+  if (error) throw error;
+}
+
+/* ---------- Comments moderation ---------- */
+
+export type AdminComment = {
+  id: string;
+  post_id: string;
+  name: string;
+  email: string;
+  body: string;
+  reply_body: string | null;
+  replied_at: string | null;
+  reply_notified_at: string | null;
+  created_at: string;
+  posts: { title: string; slug: string } | null;
+};
+
+export async function fetchAdminComments(): Promise<AdminComment[]> {
+  const { data, error } = await supabase
+    .from("comments")
+    .select("id, post_id, name, email, body, reply_body, replied_at, reply_notified_at, created_at, posts(title, slug)")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as unknown as AdminComment[];
+}
+
+export const adminCommentsQuery = queryOptions({
+  queryKey: ["comments", "admin"],
+  queryFn: fetchAdminComments,
+});
+
+export async function updateCommentBody(id: string, body: string): Promise<void> {
+  const { error } = await supabase.from("comments").update({ body }).eq("id", id);
+  if (error) throw error;
+}
+
+export async function replyToComment(id: string, reply: string): Promise<void> {
+  const { error } = await supabase
+    .from("comments")
+    .update({ reply_body: reply, replied_at: new Date().toISOString() })
+    .eq("id", id);
+  if (error) throw error;
+}
+
+export async function deleteComment(id: string): Promise<void> {
+  const { error } = await supabase.from("comments").delete().eq("id", id);
+  if (error) throw error;
+}
+
+/* ---------- Contact inbox ---------- */
+
+export type ContactMessage = {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  handled: boolean;
+  created_at: string;
+};
+
+export async function fetchContactMessages(): Promise<ContactMessage[]> {
+  const { data, error } = await supabase
+    .from("contact_messages")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as ContactMessage[];
+}
+
+export const contactMessagesQuery = queryOptions({
+  queryKey: ["contact-messages"],
+  queryFn: fetchContactMessages,
+});
+
+export async function setContactHandled(id: string, handled: boolean): Promise<void> {
+  const { error } = await supabase.from("contact_messages").update({ handled }).eq("id", id);
+  if (error) throw error;
+}
+
+export async function deleteContactMessage(id: string): Promise<void> {
+  const { error } = await supabase.from("contact_messages").delete().eq("id", id);
   if (error) throw error;
 }
