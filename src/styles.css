@@ -56,19 +56,20 @@
   --secondary-foreground: oklch(0.235 0.008 60);
   --muted: oklch(0.938 0.012 85);
   --muted-foreground: oklch(0.505 0.012 70);
-  /* vivid sage */
-  --accent: oklch(0.575 0.115 152);
+  /* electric violet */
+  --accent: oklch(0.545 0.185 300);
   --accent-foreground: oklch(0.985 0.005 90);
-  /* warm terracotta */
-  --terracotta: oklch(0.575 0.165 38);
-  --cobalt: oklch(0.545 0.155 250);
-  --amber: oklch(0.735 0.155 78);
-  --plum: oklch(0.505 0.145 330);
+  /* hot pink (replaces the old terracotta) */
+  --terracotta: oklch(0.615 0.205 355);
+  --cobalt: oklch(0.545 0.175 258);
+  /* periwinkle (replaces the old amber) */
+  --amber: oklch(0.665 0.155 285);
+  --plum: oklch(0.495 0.175 322);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0.005 90);
   --border: oklch(0.885 0.012 82);
   --input: oklch(0.885 0.012 82);
-  --ring: oklch(0.575 0.115 152);
+  --ring: oklch(0.545 0.185 300);
 }
 
 @layer base {

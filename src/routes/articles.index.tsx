@@ -4,16 +4,16 @@ import { useMemo, useState } from "react";
 import { ArticleCard } from "@/components/article-card";
 import { articles, tags } from "@/data/articles";
 
-export const Route = createFileRoute("/articles")({
+export const Route = createFileRoute("/articles/")({
   head: () => ({
     meta: [
-      { title: "Articles — Victória Mariucha, Engineer & Science Writer" },
+      { title: "Articles – Victória Mariucha, Engineer & Science Writer" },
       {
         name: "description",
         content:
           "Essays and explainers on code, AI, space, science and Spider-Man by Victória Mariucha. Filter by topic or search by keyword.",
       },
-      { property: "og:title", content: "Articles — Victória Mariucha, Engineer & Science Writer" },
+      { property: "og:title", content: "Articles – Victória Mariucha, Engineer & Science Writer" },
       {
         property: "og:description",
         content: "Essays and explainers on code, AI, space, science and one friendly neighborhood superhero.",
@@ -48,7 +48,7 @@ function ArticlesPage() {
         Articles, essays and <em className="italic text-terracotta">extremely detailed tangents</em>
       </h1>
       <p className="mt-5 max-w-xl leading-relaxed text-muted-foreground">
-        Everything I've written about code, AI, space and science — plus a few pieces my editor
+        Everything I've written, plus a few pieces my editor
         (me) probably should have questioned. Filter by topic or search the archive.
       </p>
 

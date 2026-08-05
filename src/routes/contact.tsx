@@ -8,13 +8,13 @@ export const Route = createFileRoute("/contact")({
   }),
   head: () => ({
     meta: [
-      { title: "Contact Victória Mariucha — Let's Work Together" },
+      { title: "Contact Victória Mariucha – Let's Work Together" },
       {
         name: "description",
         content:
-          "Commissions, collaborations, pitches or just a good science argument. Email vicmariucha@gmail.com — based in Sorocaba, Brazil (UTC−3).",
+          "Commissions, collaborations, pitches or just a good science argument. Email vicmariucha@gmail.com – based in Sorocaba, Brazil (UTC−3).",
       },
-      { property: "og:title", content: "Contact Victória Mariucha — Let's Work Together" },
+      { property: "og:title", content: "Contact Victória Mariucha – Let's Work Together" },
       {
         property: "og:description",
         content: "Freelance writing, collaborations and pitches welcome. Sorocaba, Brazil (UTC−3).",
@@ -52,7 +52,7 @@ function ContactPage() {
           </h1>
           <p className="mt-6 leading-relaxed text-muted-foreground">
             Freelance commissions, collaborations, developer documentation, speaking invitations,
-            pitches, or a strongly worded opinion about which Spider-Man is the best one — all
+            pitches, or a strongly worded opinion about which Spider-Man is the best one – all
             welcome. I answer every genuine message, usually within two working days, occasionally
             within two minutes if I'm procrastinating.
           </p>
@@ -68,7 +68,7 @@ function ContactPage() {
             </a>
             <p className="mt-4 inline-flex items-center gap-2 text-xs text-muted-foreground">
               <MapPin className="h-3.5 w-3.5 text-accent" />
-              Sorocaba, Brazil · UTC−3 (America/Sao_Paulo) — happily overlapping with Europe in the
+              Sorocaba, Brazil · UTC−3 (America/Sao_Paulo) – happily overlapping with Europe in the
               morning and the US all afternoon
             </p>
           </div>
@@ -99,7 +99,7 @@ function ContactPage() {
               </span>
               <h2 className="mt-6 font-display text-3xl">Message sent</h2>
               <p className="mt-3 max-w-xs text-sm text-muted-foreground">
-                Thank you! It's already on its way to Sorocaba. I'll get back to you shortly —
+                Thank you! It's already on its way to Sorocaba. I'll get back to you shortly –
                 probably faster than you expect.
               </p>
               <button
