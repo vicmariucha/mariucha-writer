@@ -29,7 +29,7 @@ export type Post = {
 };
 
 const POST_COLUMNS =
-  "id, slug, title, excerpt, body_html, cover_image_url, cover_image_alt, tag_id, publication, published, featured, published_at, views, likes, tags(id, name, slug, color), post_tags(tags(id, name, slug, color))";
+  "id, slug, title, excerpt, body_html, cover_image_url, cover_image_alt, tag_id, publication, published, featured, published_at, views, likes, tags!posts_tag_id_fkey(id, name, slug, color), post_tags(tags(id, name, slug, color))";
 
 type RawPost = Omit<Post, "tagList"> & {
   post_tags?: { tags: Tag | null }[] | null;
