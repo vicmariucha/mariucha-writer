@@ -13,7 +13,7 @@ export const ownerExists = createServerFn({ method: "GET" }).handler(async () =>
 });
 
 export const incrementPostViews = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => slugSchema.parse(data))
+  .validator((data: unknown) => slugSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: views, error } = await supabaseAdmin.rpc("increment_post_views", { _slug: data.slug });
@@ -22,7 +22,7 @@ export const incrementPostViews = createServerFn({ method: "POST" })
   });
 
 export const incrementPostLikes = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => likeSchema.parse(data))
+  .validator((data: unknown) => likeSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: likes, error } = await supabaseAdmin.rpc("increment_post_likes", {
