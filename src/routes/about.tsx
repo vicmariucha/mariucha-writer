@@ -35,11 +35,12 @@ const credentials = [
 
 const expertise = [
   "Software engineering",
-  "AI & machine learning explainers",
-  "Developer documentation",
   "Space & physics writing",
-  "Technical storytelling",
   "Making acronyms make sense",
+  "Tech explainer",
+  "Health & medicine writing",
+  "Education & science outreach",
+  "Environment & climate",
 ];
 
 function AboutPage() {
