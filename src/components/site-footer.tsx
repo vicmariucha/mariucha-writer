@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { MapPin } from "lucide-react";
+import { LocalTime } from "@/components/local-time";
 
 const socials = [
-  { label: "LinkedIn", href: "https://linkedin.com" },
-  { label: "GitHub", href: "https://github.com" },
-  { label: "X", href: "https://x.com" },
-  { label: "Substack", href: "https://substack.com" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/victoria-mariucha/" },
+  { label: "GitHub", href: "https://github.com/vicmariucha" },
+  { label: "Substack", href: "https://substack.com/@vicmariucha" },
 ];
 
 export function SiteFooter() {
@@ -20,14 +20,16 @@ export function SiteFooter() {
           </p>
           <p className="mt-4 inline-flex items-center gap-2 text-xs text-muted-foreground">
             <MapPin className="h-3.5 w-3.5 text-accent" />
-            Sorocaba, Brazil · UTC−3 (America/Sao_Paulo)
+            Sorocaba, Brazil · <LocalTime suffix="my time zone right now" />
           </p>
-          <a
-            href="mailto:vicmariucha@gmail.com"
-            className="link-underline mt-4 block text-sm text-terracotta"
-          >
-            vicmariucha@gmail.com
-          </a>
+          <span className="mt-4 block">
+            <a
+              href="mailto:vicmariucha@gmail.com"
+              className="link-underline inline-block text-sm text-terracotta"
+            >
+              vicmariucha@gmail.com
+            </a>
+          </span>
         </div>
         <div className="flex flex-col gap-4 md:items-end">
           <div className="flex flex-wrap gap-x-6 gap-y-2">

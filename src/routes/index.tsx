@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, MapPin } from "lucide-react";
 import { ArticleCard } from "@/components/article-card";
+import { LocalTime } from "@/components/local-time";
 import { articles } from "@/data/articles";
 
 export const Route = createFileRoute("/")({
@@ -34,14 +35,14 @@ function Index() {
       <section className="mx-auto max-w-6xl px-5 pb-20 pt-16 sm:px-8 sm:pt-24">
         <p className="eyebrow animate-fade-in inline-flex items-center gap-2">
           <MapPin className="h-3.5 w-3.5 text-accent" />
-          Sorocaba, Brazil · UTC−3
+          Sorocaba, Brazil · <LocalTime suffix="my time zone" />
         </p>
         <h1 className="animate-fade-in mt-6 max-w-4xl font-display text-[2.6rem] leading-[1.05] sm:text-6xl lg:text-7xl">
           I turn complicated science into things people{" "}
           <em className="italic text-terracotta">actually finish reading</em>.
         </h1>
         <p className="animate-fade-in mt-8 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-          Hi, I'm Victória Mariucha – computer engineer, developer, professional over-explainer of
+          Hi, I'm VicMariucha – computer engineer, developer, professional over-explainer of
           any topic you can imagine, and, in my free time, an extremely committed Spider-Man fan. I
           write about science, technology, space, environment, and the parts of science that make
           you say "wait, really?"

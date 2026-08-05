@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Check, Mail, MapPin } from "lucide-react";
 import { useState, type FormEvent } from "react";
+import { LocalTime } from "@/components/local-time";
 
 export const Route = createFileRoute("/contact")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -25,10 +26,9 @@ export const Route = createFileRoute("/contact")({
 });
 
 const socials = [
-  { label: "LinkedIn", href: "https://linkedin.com" },
-  { label: "GitHub", href: "https://github.com" },
-  { label: "Twitter / X", href: "https://x.com" },
-  { label: "Substack", href: "https://substack.com" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/victoria-mariucha/" },
+  { label: "GitHub", href: "https://github.com/vicmariucha" },
+  { label: "Substack", href: "https://substack.com/@vicmariucha" },
 ];
 
 function ContactPage() {
@@ -68,8 +68,8 @@ function ContactPage() {
             </a>
             <p className="mt-4 inline-flex items-center gap-2 text-xs text-muted-foreground">
               <MapPin className="h-3.5 w-3.5 text-accent" />
-              Sorocaba, Brazil · UTC−3 (America/Sao_Paulo) – happily overlapping with Europe in the
-              morning and the US all afternoon
+              Sorocaba, Brazil · <LocalTime suffix="my time zone right now" /> – happily
+              overlapping with Europe in the morning and the US all afternoon
             </p>
           </div>
 
