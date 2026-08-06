@@ -30,9 +30,12 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 }
 
 function createSupabaseAdminClient() {
-  // Forçamos a leitura da variável de ambiente ou injetamos diretamente caso o Node não carregue o .env a tempo
-  const SUPABASE_URL = process.env['SUPABASE_URL'] || 'https://jtsvwarezbpcwfhtqxjh.supabase.co';
-  const SUPABASE_SERVICE_ROLE_KEY = process.env['SUPABASE_SERVICE_ROLE_KEY'] || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0c3Z3YXJlemJwY3dmaHRxeGpoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NTk1NjQyNSwiZXhwIjoyMTAxNTMyNDI1fQ.efI_a1-pJLQ55oVOMq3B7ylbNr78k1yGQY9gQl4orck';
+  const SUPABASE_URL = process.env.SUPABASE_URL;
+  const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error("Missing Supabase environment variables for admin client.");
+  }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
     global: {

@@ -5,7 +5,6 @@ import { ArticleCard } from "@/components/article-card";
 import { LocalTime } from "@/components/local-time";
 import { postsQuery } from "@/lib/blog";
 
-
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -25,10 +24,8 @@ export const Route = createFileRoute("/")({
           "Freelance science writer and developer writer turning complex research into clear, engaging English.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://mariucha-writer.lovable.app/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://mariucha-writer.lovable.app/" }],
   }),
 
   loader: ({ context }) => context.queryClient.ensureQueryData(postsQuery),
@@ -38,7 +35,6 @@ export const Route = createFileRoute("/")({
 function Index() {
   const { data: posts } = useSuspenseQuery(postsQuery);
   const featured = posts.slice(0, 3);
-
 
   return (
     <>
@@ -68,7 +64,6 @@ function Index() {
           <Link
             to="/contact"
             search={{ intent: undefined }}
-
             className="inline-flex items-center gap-2 rounded-full border border-cobalt/50 px-7 py-3 text-sm text-cobalt transition-all duration-300 hover:bg-cobalt/8"
           >
             Get in Touch

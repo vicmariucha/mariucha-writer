@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, MapPin, Sparkles } from "lucide-react";
-import authorPhoto from "@/assets/author-photo.png.asset.json";
+import authorPhoto from "@/assets/victoria-mariucha.png";
 import { LocalTime } from "@/components/local-time";
 import { DeveloperCTA } from "@/components/developer-cta";
 
