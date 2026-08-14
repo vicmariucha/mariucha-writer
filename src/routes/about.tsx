@@ -33,10 +33,26 @@ export const Route = createFileRoute("/about")({
 });
 
 const credentials = [
-  { k: "B.Eng, Computer Engineering", v: "Plus an exchange program in Guarda, Portugal that was genuinely awesome", c: "border-cobalt/60" },
-  { k: "Software Developer", v: "Shipping code that mostly behaves in production", c: "border-accent/60" },
-  { k: "Science & Tech Obsessive", v: "Reads papers recreationally. It's a whole thing.", c: "border-amber/70" },
-  { k: "Certified Spider-Man Apologist", v: "Will defend the 2012 movie in any technical review", c: "border-terracotta/60" },
+  {
+    k: "B.Eng, Computer Engineering",
+    v: "Plus an exchange program in Guarda, Portugal that was genuinely awesome",
+    c: "border-cobalt/60",
+  },
+  {
+    k: "Software Developer",
+    v: "Shipping code that mostly behaves in production",
+    c: "border-accent/60",
+  },
+  {
+    k: "Science & Tech Obsessive",
+    v: "Reads papers recreationally. It's a whole thing.",
+    c: "border-amber/70",
+  },
+  {
+    k: "Certified Spider-Man Apologist",
+    v: "Will defend the 2012 movie in any technical review",
+    c: "border-terracotta/60",
+  },
 ];
 
 const expertise = [
@@ -61,7 +77,7 @@ function AboutPage() {
         <figure className="mb-6 sm:float-left sm:mr-8 sm:w-[46%] md:w-[42%]">
           <div className="aspect-4/5 overflow-hidden rounded-2xl border border-border bg-linear-to-br from-terracotta/15 to-cobalt/15">
             <img
-              src={authorPhoto.url}
+              src={authorPhoto}
               alt="Portrait of Victória Mariucha, computer engineer and writer"
               className="h-full w-full rounded-2xl object-cover object-top transition-transform duration-700 hover:scale-[1.03]"
             />
@@ -146,7 +162,6 @@ function AboutPage() {
           <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
-
 
       <div className="mt-24 rounded-sm border border-dashed border-terracotta/40 bg-linear-to-br from-terracotta/8 via-card to-amber/8 p-8 sm:p-12">
         <p className="eyebrow">Bylines</p>

@@ -1,12 +1,28 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
+import { Menu, Moon, Sun, X } from "lucide-react";
 import { useState } from "react";
+import { useTheme } from "@/hooks/use-theme";
 
 const links = [
+  { to: "/", label: "Home" },
   { to: "/about", label: "About" },
   { to: "/articles", label: "Articles" },
   { to: "/contact", label: "Contact" },
 ] as const;
+
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme();
+  return (
+    <button
+      type="button"
+      aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+      onClick={toggleTheme}
+      className="shrink-0 rounded-full border border-border p-2 text-muted-foreground transition-colors hover:border-terracotta hover:text-terracotta"
+    >
+      {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+    </button>
+  );
+}
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -22,26 +38,39 @@ export function SiteHeader() {
           <span className="eyebrow block">Writer · Computer Engineer · Developer</span>
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
-          {links.map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              className="relative pb-1 text-sm text-muted-foreground transition-colors after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-linear-to-r after:from-terracotta after:via-amber after:to-cobalt after:transition-transform after:duration-300 hover:text-terracotta hover:after:scale-x-100"
-              activeProps={{ className: "text-foreground after:scale-x-100" }}
-            >
-              {l.label}
-            </Link>
-          ))}
+        <div className="flex items-center gap-3">
+          <nav className="hidden items-center gap-8 md:flex">
+            {links.map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                className="relative pb-1 text-sm text-muted-foreground transition-colors after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-linear-to-r after:from-terracotta after:via-amber after:to-cobalt after:transition-transform after:duration-300 hover:text-terracotta hover:after:scale-x-100"
+                activeProps={{ className: "text-foreground after:scale-x-100" }}
+              >
+                {l.label}
+              </Link>
+            ))}
 
-          <Link
-            to="/contact"
-            search={{ intent: "hire" }}
-            className="rounded-full border border-terracotta px-5 py-2 text-xs uppercase tracking-[0.18em] text-terracotta transition-all duration-300 hover:bg-terracotta hover:text-background hover:shadow-elevate"
+            <Link
+              to="/contact"
+              search={{ intent: "hire" }}
+              className="rounded-full border border-terracotta px-5 py-2 text-xs uppercase tracking-[0.18em] text-terracotta transition-all duration-300 hover:bg-terracotta hover:text-background hover:shadow-elevate"
+            >
+              Hire Me
+            </Link>
+          </nav>
+
+          <ThemeToggle />
+
+          <button
+            type="button"
+            aria-label={open ? "Close menu" : "Open menu"}
+            onClick={() => setOpen((v) => !v)}
+            className="shrink-0 p-1 md:hidden"
           >
-            Hire Me
-          </Link>
-        </nav>
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
 
         <button
           type="button"
