@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { commentsQuery } from "@/lib/blog";
+import { commentsQuery, formatDateTime } from "@/lib/blog";
 
 const field = "w-full rounded-sm border border-border bg-card px-4 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-accent";
 
@@ -59,11 +59,9 @@ export function CommentsSection({ postId }: { postId: string }) {
 
       <ul className="mt-10 space-y-6">
         {comments.map((c) => (
-          <li key={c.id} className="border-l-2 border-plum/40 pl-5">
+          <li key={c.id} id={`comment-${c.id}`} className="scroll-mt-24 border-l-2 border-plum/40 pl-5">
             <p className="text-sm font-medium">{c.name}</p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {new Date(c.created_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
-            </p>
+            <p className="mt-1 text-xs text-muted-foreground">{formatDateTime(c.created_at)}</p>
             <p className="mt-3 whitespace-pre-line leading-relaxed text-muted-foreground">{c.body}</p>
             {c.reply_body && (
               <div className="mt-4 rounded-sm border border-accent/30 bg-accent/5 p-4">

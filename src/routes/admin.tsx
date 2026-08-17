@@ -1,12 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Session } from "@supabase/supabase-js";
-import { Eye, Heart, Inbox, LogOut, MessageSquare, Pencil, Plus, Star, Trash2 } from "lucide-react";
+import { Eye, ExternalLink, Heart, Inbox, LogOut, MessageSquare, Pencil, Plus, Star, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { RichTextEditor } from "@/components/rich-text-editor";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { supabase } from "@/integrations/supabase/client";
-import { adminPostsQuery, formatDate, parseColor, slugify, tagColorOptions, tagsQuery, tagVisual, type Post, type Tag } from "@/lib/blog";
+import { adminPostsQuery, formatDate, formatDateTime, parseColor, slugify, tagColorOptions, tagsQuery, tagVisual, type Post, type Tag } from "@/lib/blog";
 import { adminCommentsQuery, contactMessagesQuery, createPost, createTag, deleteComment, deleteContactMessage, deletePost, deleteTag, replyToComment, setContactHandled, setFeatured, updateCommentBody, updatePost, updateTag, uploadImage, type AdminComment, type ContactMessage, type PostInput } from "@/lib/blog-admin";
 
 export const Route = createFileRoute("/admin")({
@@ -541,14 +541,20 @@ function CommentsPanel() {
   const queryClient = useQueryClient();
   const { data: comments = [] } = useQuery(adminCommentsQuery);
   const [pendingDelete, setPendingDelete] = useState<AdminComment | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const refresh = () => { void queryClient.invalidateQueries({ queryKey: ["comments"] }); };
-  const remove = useMutation({ mutationFn: (id: string) => deleteComment(id), onSuccess: refresh });
+  const remove = useMutation({
+    mutationFn: (id: string) => deleteComment(id),
+    onSuccess: () => { setDeleteError(null); refresh(); },
+    onError: (err: Error) => setDeleteError(err.message),
+  });
 
   if (comments.length === 0) return <p className="mt-10 text-sm text-muted-foreground">No comments yet.</p>;
 
   return (
     <>
+      {deleteError && <p className="mt-4 text-sm text-destructive">{deleteError}</p>}
       <ul className="mt-8 divide-y divide-border border-b border-border">
         {comments.map((c) => (
           <CommentRow key={c.id} comment={c} onChanged={refresh} onDelete={() => setPendingDelete(c)} />
@@ -569,10 +575,20 @@ function CommentsPanel() {
 function CommentRow({ comment, onChanged, onDelete }: { comment: AdminComment; onChanged: () => void; onDelete: () => void }) {
   const [body, setBody] = useState(comment.body);
   const [reply, setReply] = useState(comment.reply_body ?? "");
-  const [status, setStatus] = useState<string | null>(null);
+  const [status, setStatus] = useState<{ text: string; isError: boolean } | null>(null);
 
-  const saveBody = useMutation({ mutationFn: () => updateCommentBody(comment.id, body.trim()), onSuccess: () => { setStatus("Comment updated"); onChanged(); } });
-  const saveReply = useMutation({ mutationFn: () => replyToComment(comment.id, reply.trim()), onSuccess: () => { setStatus("Reply published"); onChanged(); } });
+  const saveBody = useMutation({
+    mutationFn: () => updateCommentBody(comment.id, body.trim()),
+    onSuccess: () => { setStatus({ text: "Comment updated", isError: false }); onChanged(); },
+    onError: (err: Error) => setStatus({ text: err.message, isError: true }),
+  });
+  const saveReply = useMutation({
+    mutationFn: () => replyToComment(comment.id, reply.trim()),
+    onSuccess: () => { setStatus({ text: "Reply published", isError: false }); onChanged(); },
+    onError: (err: Error) => setStatus({ text: err.message, isError: true }),
+  });
+
+  const anchor = `comment-${comment.id}`;
 
   return (
     <li className="py-5">
@@ -581,7 +597,23 @@ function CommentRow({ comment, onChanged, onDelete }: { comment: AdminComment; o
           <span className="font-medium">{comment.name}</span> <span className="text-muted-foreground">· {comment.email}</span>
         </p>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-muted-foreground">{comment.posts?.title ?? "Unknown article"} · {formatDate(comment.created_at)}</span>
+          <span className="text-xs text-muted-foreground">
+            {comment.posts ? (
+              <Link
+                to="/articles/$slug"
+                params={{ slug: comment.posts.slug }}
+                hash={anchor}
+                target="_blank"
+                className="link-underline inline-flex items-center gap-1 text-foreground"
+              >
+                {comment.posts.title}
+                <ExternalLink className="h-3 w-3" />
+              </Link>
+            ) : (
+              "Unknown article"
+            )}{" "}
+            · {formatDateTime(comment.created_at)}
+          </span>
           <button type="button" onClick={onDelete} aria-label="Delete comment" className="rounded-full border border-border p-2 text-muted-foreground transition-colors hover:border-destructive/50 hover:text-destructive">
             <Trash2 className="h-4 w-4" />
           </button>
@@ -600,7 +632,7 @@ function CommentRow({ comment, onChanged, onDelete }: { comment: AdminComment; o
         <button type="button" disabled={!reply.trim() || reply.trim() === (comment.reply_body ?? "") || saveReply.isPending} onClick={() => saveReply.mutate()} className="rounded-full bg-foreground px-4 py-1.5 text-xs uppercase tracking-[0.14em] text-background disabled:opacity-40">
           Publish reply
         </button>
-        {status && <span className="text-xs text-accent">{status}</span>}
+        {status && <span className={`text-xs ${status.isError ? "text-destructive" : "text-accent"}`}>{status.text}</span>}
       </div>
     </li>
   );

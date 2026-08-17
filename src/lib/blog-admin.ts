@@ -126,22 +126,42 @@ export const adminCommentsQuery = queryOptions({
   queryFn: fetchAdminComments,
 });
 
+/**
+ * Supabase silently "succeeds" an update/delete that matches zero rows —
+ * e.g. because a Row Level Security policy quietly filters the row out.
+ * No `error` is raised, so without checking the returned rows a blocked
+ * write looks identical to a real one. Every admin mutation below asks
+ * for the affected row back and throws if none came back, so a missing
+ * policy shows up as a visible error instead of a false "success".
+ */
+async function assertRowAffected(id: string, data: unknown[] | null, action: string): Promise<void> {
+  if (!data || data.length === 0) {
+    throw new Error(
+      `${action} did not go through (comment ${id} was not modified). This usually means an admin permission is missing in Supabase — check the RLS policies on "comments".`,
+    );
+  }
+}
+
 export async function updateCommentBody(id: string, body: string): Promise<void> {
-  const { error } = await supabase.from("comments").update({ body }).eq("id", id);
+  const { data, error } = await supabase.from("comments").update({ body }).eq("id", id).select("id");
   if (error) throw error;
+  await assertRowAffected(id, data, "Saving the comment edit");
 }
 
 export async function replyToComment(id: string, reply: string): Promise<void> {
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("comments")
     .update({ reply_body: reply, replied_at: new Date().toISOString() })
-    .eq("id", id);
+    .eq("id", id)
+    .select("id");
   if (error) throw error;
+  await assertRowAffected(id, data, "Publishing the reply");
 }
 
 export async function deleteComment(id: string): Promise<void> {
-  const { error } = await supabase.from("comments").delete().eq("id", id);
+  const { data, error } = await supabase.from("comments").delete().eq("id", id).select("id");
   if (error) throw error;
+  await assertRowAffected(id, data, "Deleting the comment");
 }
 
 /* ---------- Contact inbox ---------- */

@@ -87,6 +87,20 @@ export function formatDate(value: string) {
   });
 }
 
+/** Date + time (viewer's local time zone) — used for comments, where "when exactly" matters. */
+export function formatDateTime(value: string | null | undefined) {
+  if (!value) return "unknown date";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "unknown date";
+  return date.toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
 export function readTime(html: string) {
   const words = html
     .replace(/<[^>]*>/g, " ")
