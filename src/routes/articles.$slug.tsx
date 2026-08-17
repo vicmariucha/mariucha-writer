@@ -5,6 +5,8 @@ import { CommentsSection } from "@/components/comments-section";
 import { PostInteractions } from "@/components/post-interactions";
 import { formatDate, postQuery, postsQuery, readTime, tagVisual } from "@/lib/blog";
 
+const SITE_URL = "https://writer.vicmariucha.com.br";
+
 export const Route = createFileRoute("/articles/$slug")({
   loader: async ({ context, params }) => {
     const [post] = await Promise.all([
@@ -18,13 +20,14 @@ export const Route = createFileRoute("/articles/$slug")({
       image: post.cover_image_url,
       slug: post.slug,
       publishedAt: post.published_at,
+      updatedAt: post.updated_at,
     };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
       return { meta: [{ title: "Unavailable" }, { name: "robots", content: "noindex" }] };
     }
-    const url = `https://mariucha-writer.lovable.app/articles/${loaderData.slug}`;
+    const url = `${SITE_URL}/articles/${loaderData.slug}`;
     return {
       meta: [
         { title: `${loaderData.title} – Vic Mariucha` },
@@ -33,6 +36,8 @@ export const Route = createFileRoute("/articles/$slug")({
         { property: "og:description", content: loaderData.excerpt },
         { property: "og:type", content: "article" },
         { property: "og:url", content: url },
+        { property: "article:published_time", content: loaderData.publishedAt },
+        { property: "article:modified_time", content: loaderData.updatedAt ?? loaderData.publishedAt },
         { name: "twitter:card", content: "summary_large_image" },
         ...(loaderData.image?.startsWith("https://")
           ? [
@@ -47,13 +52,27 @@ export const Route = createFileRoute("/articles/$slug")({
           type: "application/ld+json",
           children: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "Article",
-            headline: loaderData.title,
-            description: loaderData.excerpt,
-            datePublished: loaderData.publishedAt,
-            mainEntityOfPage: url,
-            ...(loaderData.image?.startsWith("https://") ? { image: loaderData.image } : {}),
-            author: { "@type": "Person", name: "Victória Mariucha" },
+            "@graph": [
+              {
+                "@type": "Article",
+                headline: loaderData.title,
+                description: loaderData.excerpt,
+                datePublished: loaderData.publishedAt,
+                dateModified: loaderData.updatedAt ?? loaderData.publishedAt,
+                mainEntityOfPage: url,
+                ...(loaderData.image?.startsWith("https://") ? { image: loaderData.image } : {}),
+                author: { "@type": "Person", name: "Victória Mariucha", "@id": `${SITE_URL}/#person` },
+                publisher: { "@id": `${SITE_URL}/#person` },
+              },
+              {
+                "@type": "BreadcrumbList",
+                itemListElement: [
+                  { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+                  { "@type": "ListItem", position: 2, name: "Articles", item: `${SITE_URL}/articles` },
+                  { "@type": "ListItem", position: 3, name: loaderData.title, item: url },
+                ],
+              },
+            ],
           }),
         },
       ],

@@ -4,6 +4,8 @@ import authorPhoto from "@/assets/victoria-mariucha.png";
 import { LocalTime } from "@/components/local-time";
 import { DeveloperCTA } from "@/components/developer-cta";
 
+const ABOUT_URL = "https://writer.vicmariucha.com.br/about";
+
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
@@ -23,10 +25,23 @@ export const Route = createFileRoute("/about")({
           "Computer engineer, developer and freelance science writer covering space, health, environment and technology.",
       },
       { property: "og:type", content: "profile" },
-      { property: "og:url", content: "https://mariucha-writer.lovable.app/about" },
+      { property: "og:url", content: ABOUT_URL },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://mariucha-writer.lovable.app/about" }],
+    links: [{ rel: "canonical", href: ABOUT_URL }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://writer.vicmariucha.com.br/" },
+            { "@type": "ListItem", position: 2, name: "About", item: ABOUT_URL },
+          ],
+        }),
+      },
+    ],
   }),
 
   component: AboutPage,

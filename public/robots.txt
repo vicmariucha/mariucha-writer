@@ -1,3 +1,4 @@
+# Traditional search engines
 User-agent: Googlebot
 Allow: /
 
@@ -10,8 +11,51 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
+# AI answer engines / assistants — allowed so this portfolio can be
+# cited, summarized and linked to by AI search and chat products.
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# Everyone else
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /shell-bootstrap
 
-Sitemap: https://mariucha-writer.lovable.app/sitemap.xml
+Sitemap: https://writer.vicmariucha.com.br/sitemap.xml

@@ -13,11 +13,11 @@ export function DeveloperCTA() {
         </p>
         <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
           Repositories, side projects and commit messages written at questionable hours – it's all
-          on GitHub.
+          on my Dev Website.
         </p>
       </div>
       <a
-        href="https://github.com/vicmariucha"
+        href="https://dev.vicmariucha.com.br/"
         target="_blank"
         rel="noreferrer noopener"
         className="inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-cobalt px-6 py-3 text-sm text-background transition-all duration-300 hover:shadow-elevate sm:self-auto"

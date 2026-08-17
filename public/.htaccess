@@ -1,9 +1,30 @@
-DirectoryIndex _shell.html
+# Prevent raw directory listings from ever being shown for a route
+# folder that doesn't have its own prerendered index.html (see rules below).
+Options -Indexes
+DirectoryIndex disabled
+
+# Don't let Apache auto-redirect "/about" -> "/about/" before our rewrite
+# rules run — our canonical URLs (sitemap, meta tags) have no trailing
+# slash, so we want the no-slash form served directly, with no extra hop.
+DirectorySlash Off
 
 RewriteEngine On
 RewriteBase /
+
+# 1) Real, existing files (assets, favicon, robots.txt, sitemap.xml, the
+#    prerendered per-route index.html files themselves, etc.) are served as-is.
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^ - [L]
+
+# 2) If this route was statically prerendered, its content lives at
+#    <path>/index.html — serve that directly (with or without a trailing
+#    slash, and for the homepage too).
+RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
+RewriteRule ^(.*?)/?$ /$1/index.html [L]
+RewriteCond %{DOCUMENT_ROOT}/index.html -f
+RewriteRule ^$ /index.html [L]
+
+# 3) Anything else (client-only routes such as /admin, or a path with no
+#    prerendered snapshot) falls back to the generic SPA shell, which
+#    hydrates and takes over client-side routing.
 RewriteRule ^ /_shell.html [L]

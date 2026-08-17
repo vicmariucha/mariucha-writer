@@ -1,0 +1,18 @@
+# Vic Mariucha – Science Writer & Freelance Developer Writer
+
+> Vic Mariucha (Victória Mariucha) is a freelance science writer and developer writer based in Sorocaba, Brazil, who turns research on space, health, environment and technology into clear, engaging English for a general audience.
+
+Vic is a computer engineer and software developer by training who writes science journalism and technical/developer documentation on the side. Her work explains complex research (space, physics, health, medicine, environment, climate, software engineering, AI) in plain language, aimed at readers with no specialized background. She is open for freelance commissions, collaborations, developer documentation work, and pitches. Contact: vicmariucha@gmail.com.
+
+## Key pages
+
+- [Homepage](https://writer.vicmariucha.com.br/): Introduction, featured articles, and a short bio.
+- [Articles](https://writer.vicmariucha.com.br/articles): Full portfolio of published science and technology writing, filterable by topic.
+- [About](https://writer.vicmariucha.com.br/about): Background, credentials and writing philosophy.
+- [Contact](https://writer.vicmariucha.com.br/contact): How to reach Vic for commissions, collaborations or questions.
+
+## Elsewhere
+
+- [GitHub](https://github.com/vicmariucha): Code and open-source projects.
+- [LinkedIn](https://www.linkedin.com/in/victoria-mariucha/): Professional profile.
+- [Substack](https://substack.com/@vicmariucha): Newsletter and long-form writing.

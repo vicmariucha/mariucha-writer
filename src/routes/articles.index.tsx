@@ -5,7 +5,13 @@ import { useMemo, useState } from "react";
 import { ArticleCard } from "@/components/article-card";
 import { postsQuery } from "@/lib/blog";
 
+const ARTICLES_URL = "https://writer.vicmariucha.com.br/articles";
+
 export const Route = createFileRoute("/articles/")({
+  validateSearch: (search: Record<string, unknown>): { q?: string } => {
+    const q = typeof search["q"] === "string" ? search["q"] : undefined;
+    return q ? { q } : {};
+  },
   loader: async ({ context }) => {
     await context.queryClient.ensureQueryData(postsQuery);
   },
@@ -25,10 +31,23 @@ export const Route = createFileRoute("/articles/")({
           "Essays and explainers on space, health, environment, AI and code by freelance science writer Vic Mariucha.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://mariucha-writer.lovable.app/articles" },
+      { property: "og:url", content: ARTICLES_URL },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://mariucha-writer.lovable.app/articles" }],
+    links: [{ rel: "canonical", href: ARTICLES_URL }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://writer.vicmariucha.com.br/" },
+            { "@type": "ListItem", position: 2, name: "Articles", item: ARTICLES_URL },
+          ],
+        }),
+      },
+    ],
   }),
 
   errorComponent: ({ error }) => (
@@ -49,8 +68,9 @@ const sortOptions: { key: SortKey; label: string }[] = [
 
 function ArticlesPage() {
   const { data: articles } = useSuspenseQuery(postsQuery);
+  const { q } = Route.useSearch();
   const [active, setActive] = useState<string | null>(null);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(q ?? "");
   const [sort, setSort] = useState<SortKey>("recent");
 
   // Only show tags that actually have at least one published article.

@@ -24,8 +24,10 @@ export const Route = createFileRoute("/")({
           "Freelance science writer and developer writer turning complex research into clear, engaging English.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://writer.vicmariucha.com.br/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://writer.vicmariucha.com.br/" }],
   }),
 
   loader: ({ context }) => context.queryClient.ensureQueryData(postsQuery),

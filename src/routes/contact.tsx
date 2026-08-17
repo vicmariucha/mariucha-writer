@@ -5,6 +5,8 @@ import { LocalTime } from "@/components/local-time";
 import { DeveloperCTA } from "@/components/developer-cta";
 import { supabase } from "@/integrations/supabase/client";
 
+const CONTACT_URL = "https://writer.vicmariucha.com.br/contact";
+
 export const Route = createFileRoute("/contact")({
   validateSearch: (search: Record<string, unknown>) => ({
     intent: search["intent"] === "hire" ? ("hire" as const) : undefined,
@@ -24,10 +26,23 @@ export const Route = createFileRoute("/contact")({
           "Freelance science and technology writing, collaborations and pitches welcome. Sorocaba, Brazil (UTC−3).",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://mariucha-writer.lovable.app/contact" },
+      { property: "og:url", content: CONTACT_URL },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://mariucha-writer.lovable.app/contact" }],
+    links: [{ rel: "canonical", href: CONTACT_URL }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://writer.vicmariucha.com.br/" },
+            { "@type": "ListItem", position: 2, name: "Contact", item: CONTACT_URL },
+          ],
+        }),
+      },
+    ],
   }),
 
   component: ContactPage,

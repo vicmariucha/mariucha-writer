@@ -110,9 +110,14 @@ export type AdminComment = {
 };
 
 export async function fetchAdminComments(): Promise<AdminComment[]> {
-  const { listAdminComments } = await import("@/lib/site.functions");
-  const data = await listAdminComments();
-  return (data ?? []) as unknown as AdminComment[];
+  const { data, error } = await supabase.rpc("list_admin_comments");
+  if (error) throw error;
+  return ((data ?? []) as any[]).map((row) => ({
+    id: row.id, post_id: row.post_id, name: row.name, email: row.email, body: row.body,
+    reply_body: row.reply_body, replied_at: row.replied_at, reply_notified_at: row.reply_notified_at,
+    created_at: row.created_at,
+    posts: row.post_title ? { title: row.post_title, slug: row.post_slug } : null,
+  }));
 }
 
 
