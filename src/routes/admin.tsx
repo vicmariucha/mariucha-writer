@@ -567,14 +567,28 @@ function CommentsPanel() {
   const { data: comments = [] } = useQuery(adminCommentsQuery);
   const [pendingDelete, setPendingDelete] = useState<AdminComment | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  // Lives here, not on the row: approving/dismissing/etc. often makes the
+  // row itself vanish from the current filter the instant it succeeds, so a
+  // confirmation shown *on the row* would disappear before anyone saw it.
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [filter, setFilter] = useState<CommentFilter>("needsReview");
   const [query, setQuery] = useState("");
+
+  const notifySuccess = (text: string) => {
+    setActionError(null);
+    setActionMessage(text);
+    window.setTimeout(() => setActionMessage((current) => (current === text ? null : current)), 4000);
+  };
+  const notifyError = (message: string) => {
+    setActionMessage(null);
+    setActionError(message);
+  };
 
   const refresh = () => { void queryClient.invalidateQueries({ queryKey: ["comments"] }); };
   const remove = useMutation({
     mutationFn: (id: string) => deleteComment(id),
-    onSuccess: () => { setActionError(null); refresh(); },
-    onError: (err: Error) => setActionError(err.message),
+    onSuccess: () => { notifySuccess("Comment deleted"); refresh(); },
+    onError: (err: Error) => notifyError(err.message),
   });
 
   const byId = new Map(comments.map((c) => [c.id, c]));
@@ -632,6 +646,7 @@ function CommentsPanel() {
         className={`${field} mt-4`}
       />
 
+      {actionMessage && <p className="mt-4 text-sm text-accent">{actionMessage}</p>}
       {actionError && <p className="mt-4 text-sm text-destructive">{actionError}</p>}
 
       {filtered.length === 0 ? (
@@ -645,7 +660,8 @@ function CommentsPanel() {
               parent={c.parent_id ? byId.get(c.parent_id) ?? null : null}
               onChanged={refresh}
               onDelete={() => setPendingDelete(c)}
-              onError={setActionError}
+              onSuccess={notifySuccess}
+              onError={notifyError}
             />
           ))}
         </ul>
@@ -672,43 +688,43 @@ function AdminCommentRow({
   parent,
   onChanged,
   onDelete,
+  onSuccess,
   onError,
 }: {
   comment: AdminComment;
   parent: AdminComment | null;
   onChanged: () => void;
   onDelete: () => void;
+  onSuccess: (message: string) => void;
   onError: (message: string) => void;
 }) {
+  // Only your own replies can be edited — the database enforces this too
+  // (a body edit on anything else is rejected), this just keeps the UI
+  // from offering a control that would fail.
+  const editable = comment.is_admin_reply;
   const [body, setBody] = useState(comment.body);
   const [replying, setReplying] = useState(false);
   const [reply, setReply] = useState("");
-  const [status, setStatus] = useState<{ text: string; isError: boolean } | null>(null);
-
-  const notify = (text: string, isError: boolean) => {
-    setStatus({ text, isError });
-    if (isError) onError(text);
-  };
 
   const saveBody = useMutation({
     mutationFn: () => updateCommentBody(comment.id, body.trim()),
-    onSuccess: () => { notify("Comment updated", false); onChanged(); },
-    onError: (err: Error) => notify(err.message, true),
+    onSuccess: () => { onSuccess("Reply updated"); onChanged(); },
+    onError: (err: Error) => onError(err.message),
   });
   const moderate = useMutation({
     mutationFn: (next: CommentStatus) => moderateComment(comment.id, next),
-    onSuccess: (_data, next) => { notify(`Marked as ${next}`, false); onChanged(); },
-    onError: (err: Error) => notify(err.message, true),
+    onSuccess: (_data, next) => { onSuccess(`Marked as ${next}`); onChanged(); },
+    onError: (err: Error) => onError(err.message),
   });
   const dismiss = useMutation({
     mutationFn: () => markCommentReviewed(comment.id),
-    onSuccess: () => { notify("Marked as reviewed", false); onChanged(); },
-    onError: (err: Error) => notify(err.message, true),
+    onSuccess: () => { onSuccess("Marked as reviewed"); onChanged(); },
+    onError: (err: Error) => onError(err.message),
   });
   const sendReply = useMutation({
     mutationFn: () => adminReplyToComment(comment.id, reply.trim()),
-    onSuccess: () => { setReply(""); setReplying(false); notify("Reply published", false); onChanged(); },
-    onError: (err: Error) => notify(err.message, true),
+    onSuccess: () => { setReply(""); setReplying(false); onSuccess("Reply published"); onChanged(); },
+    onError: (err: Error) => onError(err.message),
   });
 
   const anchor = `comment-${comment.id}`;
@@ -755,7 +771,10 @@ function AdminCommentRow({
               ↳ in reply to {parent.name}
             </a>
           )}
-          <p className="mt-1 text-xs text-muted-foreground">{articleLink} · {formatDateTime(comment.created_at)}</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {articleLink} · {formatDateTime(comment.created_at)}
+            {comment.edited_at && " · edited"}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <span className={`rounded-full border px-3 py-1 text-[0.65rem] uppercase tracking-[0.14em] ${STATUS_BADGE[comment.status]}`}>
@@ -767,12 +786,21 @@ function AdminCommentRow({
         </div>
       </div>
 
-      <textarea className={`${field} mt-3 min-h-20 resize-y`} value={body} onChange={(e) => setBody(e.target.value)} aria-label="Comment text" />
+      {editable ? (
+        <>
+          <textarea className={`${field} mt-3 min-h-20 resize-y`} value={body} onChange={(e) => setBody(e.target.value)} aria-label="Your reply text" />
+          <div className="mt-2">
+            <button type="button" disabled={body.trim() === comment.body || saveBody.isPending} onClick={() => saveBody.mutate()} className="rounded-full border border-border px-4 py-1.5 text-xs uppercase tracking-[0.14em] text-muted-foreground hover:text-foreground disabled:opacity-40">
+              Save edit
+            </button>
+          </div>
+        </>
+      ) : (
+        <p className="mt-3 whitespace-pre-line rounded-sm border border-border bg-foreground/[0.02] p-3 text-sm leading-relaxed text-muted-foreground">
+          {comment.body}
+        </p>
+      )}
       <div className="mt-2 flex flex-wrap items-center gap-3">
-        <button type="button" disabled={body.trim() === comment.body || saveBody.isPending} onClick={() => saveBody.mutate()} className="rounded-full border border-border px-4 py-1.5 text-xs uppercase tracking-[0.14em] text-muted-foreground hover:text-foreground disabled:opacity-40">
-          Save edit
-        </button>
-
         {!comment.is_admin_reply && (
           <>
             <button
@@ -808,8 +836,6 @@ function AdminCommentRow({
         <button type="button" onClick={() => setReplying((v) => !v)} className="rounded-full bg-foreground px-4 py-1.5 text-xs uppercase tracking-[0.14em] text-background">
           {replying ? "Cancel reply" : "Reply"}
         </button>
-
-        {status && <span className={`text-xs ${status.isError ? "text-destructive" : "text-accent"}`}>{status.text}</span>}
       </div>
 
       {replying && (

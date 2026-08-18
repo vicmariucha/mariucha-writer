@@ -165,6 +165,7 @@ export type Comment = {
   name: string;
   body: string;
   is_admin_reply: boolean;
+  edited_at: string | null;
   created_at: string;
 };
 
@@ -175,7 +176,7 @@ export type CommentThread = Comment & { replies: Comment[] };
 export async function fetchComments(postId: string): Promise<Comment[]> {
   const { data, error } = await supabase
     .from("comments_public")
-    .select("id, post_id, parent_id, name, body, is_admin_reply, created_at")
+    .select("id, post_id, parent_id, name, body, is_admin_reply, edited_at, created_at")
     .eq("post_id", postId)
     .order("created_at", { ascending: true });
   if (error) throw error;

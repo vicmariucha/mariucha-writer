@@ -111,6 +111,8 @@ export type AdminComment = {
   auto_flagged: boolean;
   /** False until an admin has approved/rejected/edited/replied-to (or explicitly dismissed) it. */
   reviewed: boolean;
+  /** Set the moment one of your own replies gets its text changed after being posted. */
+  edited_at: string | null;
   created_at: string;
   post_title: string | null;
   post_slug: string | null;
@@ -130,6 +132,7 @@ export async function fetchAdminComments(): Promise<AdminComment[]> {
     is_admin_reply: row.is_admin_reply,
     auto_flagged: row.auto_flagged,
     reviewed: row.reviewed,
+    edited_at: row.edited_at,
     created_at: row.created_at,
     post_title: row.post_title,
     post_slug: row.post_slug,

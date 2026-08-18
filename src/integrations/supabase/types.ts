@@ -19,6 +19,7 @@ export type Database = {
           auto_flagged: boolean
           body: string
           created_at: string
+          edited_at: string | null
           email: string
           id: string
           is_admin_reply: boolean
@@ -32,6 +33,7 @@ export type Database = {
           auto_flagged?: boolean
           body: string
           created_at?: string
+          edited_at?: string | null
           email: string
           id?: string
           is_admin_reply?: boolean
@@ -45,6 +47,7 @@ export type Database = {
           auto_flagged?: boolean
           body?: string
           created_at?: string
+          edited_at?: string | null
           email?: string
           id?: string
           is_admin_reply?: boolean
@@ -250,6 +253,7 @@ export type Database = {
         Row: {
           body: string | null
           created_at: string | null
+          edited_at: string | null
           id: string | null
           is_admin_reply: boolean | null
           name: string | null
@@ -259,6 +263,7 @@ export type Database = {
         Insert: {
           body?: string | null
           created_at?: string | null
+          edited_at?: string | null
           id?: string | null
           is_admin_reply?: boolean | null
           name?: string | null
@@ -268,6 +273,7 @@ export type Database = {
         Update: {
           body?: string | null
           created_at?: string | null
+          edited_at?: string | null
           id?: string | null
           is_admin_reply?: boolean | null
           name?: string | null
@@ -299,6 +305,7 @@ export type Database = {
           auto_flagged: boolean
           body: string
           created_at: string
+          edited_at: string | null
           email: string
           id: string
           is_admin_reply: boolean
@@ -315,6 +322,7 @@ export type Database = {
           auto_flagged: boolean
           body: string
           created_at: string
+          edited_at: string | null
           email: string
           id: string
           is_admin_reply: boolean
@@ -344,6 +352,7 @@ export type Database = {
           auto_flagged: boolean
           body: string
           created_at: string
+          edited_at: string | null
           email: string
           id: string
           is_admin_reply: boolean

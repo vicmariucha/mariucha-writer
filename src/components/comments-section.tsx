@@ -57,7 +57,10 @@ function CommentBody({ comment }: { comment: Comment }) {
           </span>
         )}
       </p>
-      <p className="mt-1 text-xs text-muted-foreground">{formatDateTime(comment.created_at)}</p>
+      <p className="mt-1 text-xs text-muted-foreground">
+        {formatDateTime(comment.created_at)}
+        {comment.edited_at && " · edited"}
+      </p>
       <p className="mt-3 whitespace-pre-line leading-relaxed text-muted-foreground">{comment.body}</p>
     </div>
   );
