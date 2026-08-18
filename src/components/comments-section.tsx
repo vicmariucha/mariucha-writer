@@ -99,23 +99,33 @@ function CommentForm({
 }) {
   const queryClient = useQueryClient();
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
-  const [done, setDone] = useState(false);
+  const [doneMessage, setDoneMessage] = useState<string | null>(null);
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("comments").insert({
-        post_id: postId,
-        parent_id: parentId,
-        name: draft.name.trim(),
-        email: draft.email.trim(),
-        body: draft.body.trim(),
+      // A dedicated function instead of a plain insert: it decides and
+      // reports the comment's status (published instantly, or briefly
+      // held for a spam check) without ever needing to read moderation
+      // fields the visitor otherwise couldn't see.
+      const { data, error } = await supabase.rpc("post_comment", {
+        _post_id: postId,
+        _parent_id: parentId,
+        _name: draft.name.trim(),
+        _email: draft.email.trim(),
+        _body: draft.body.trim(),
       });
       if (error) throw error;
+      return data;
     },
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       setDraft(EMPTY_DRAFT);
-      setDone(true);
-      setTimeout(() => setDone(false), 5000);
+      const heldBack = (data as { status?: string } | null)?.status === "pending";
+      setDoneMessage(
+        heldBack
+          ? "Thanks! Your comment is going through a quick spam check and will appear shortly if it clears."
+          : "Thanks! Your comment is live.",
+      );
+      setTimeout(() => setDoneMessage(null), 6000);
       onPosted?.();
       await queryClient.invalidateQueries({ queryKey: ["comments", postId] });
     },
@@ -171,7 +181,7 @@ function CommentForm({
         >
           {mutation.isPending ? "Posting…" : parentId ? "Post reply" : "Post comment"}
         </button>
-        {done && <span className="text-sm text-accent">Thanks! Your comment is awaiting approval and will appear once reviewed.</span>}
+        {doneMessage && <span className="text-sm text-accent">{doneMessage}</span>}
         {mutation.isError && <span className="text-sm text-destructive">Something went wrong. Try again?</span>}
       </div>
     </form>

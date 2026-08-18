@@ -107,6 +107,10 @@ export type AdminComment = {
   body: string;
   status: CommentStatus;
   is_admin_reply: boolean;
+  /** True when the automatic filter held this one back as a likely spam/malicious post. */
+  auto_flagged: boolean;
+  /** False until an admin has approved/rejected/edited/replied-to (or explicitly dismissed) it. */
+  reviewed: boolean;
   created_at: string;
   post_title: string | null;
   post_slug: string | null;
@@ -124,6 +128,8 @@ export async function fetchAdminComments(): Promise<AdminComment[]> {
     body: row.body,
     status: row.status as CommentStatus,
     is_admin_reply: row.is_admin_reply,
+    auto_flagged: row.auto_flagged,
+    reviewed: row.reviewed,
     created_at: row.created_at,
     post_title: row.post_title,
     post_slug: row.post_slug,
@@ -152,15 +158,23 @@ async function assertRowAffected(id: string, data: unknown[] | null, action: str
 }
 
 export async function updateCommentBody(id: string, body: string): Promise<void> {
-  const { data, error } = await supabase.from("comments").update({ body }).eq("id", id).select("id");
+  const { data, error } = await supabase.from("comments").update({ body, reviewed: true }).eq("id", id).select("id");
   if (error) throw error;
   await assertRowAffected(id, data, "Saving the comment edit");
 }
 
 export async function moderateComment(id: string, status: CommentStatus): Promise<void> {
-  const { data, error } = await supabase.from("comments").update({ status }).eq("id", id).select("id");
+  const { data, error } = await supabase.from("comments").update({ status, reviewed: true }).eq("id", id).select("id");
   if (error) throw error;
   await assertRowAffected(id, data, `Marking the comment as ${status}`);
+}
+
+/** Dismisses the "new, please review" signal without changing anything else
+ * — for auto-approved comments an admin has looked at and is happy with. */
+export async function markCommentReviewed(id: string): Promise<void> {
+  const { data, error } = await supabase.from("comments").update({ reviewed: true }).eq("id", id).select("id");
+  if (error) throw error;
+  await assertRowAffected(id, data, "Marking the comment as reviewed");
 }
 
 /** Publishes an admin reply as its own threaded, timestamped comment —

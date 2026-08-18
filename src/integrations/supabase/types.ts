@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       comments: {
         Row: {
+          auto_flagged: boolean
           body: string
           created_at: string
           email: string
@@ -24,9 +25,11 @@ export type Database = {
           name: string
           parent_id: string | null
           post_id: string
+          reviewed: boolean
           status: string
         }
         Insert: {
+          auto_flagged?: boolean
           body: string
           created_at?: string
           email: string
@@ -35,9 +38,11 @@ export type Database = {
           name: string
           parent_id?: string | null
           post_id: string
+          reviewed?: boolean
           status?: string
         }
         Update: {
+          auto_flagged?: boolean
           body?: string
           created_at?: string
           email?: string
@@ -46,6 +51,7 @@ export type Database = {
           name?: string
           parent_id?: string | null
           post_id?: string
+          reviewed?: boolean
           status?: string
         }
         Relationships: [
@@ -290,6 +296,7 @@ export type Database = {
       admin_reply_to_comment: {
         Args: { _body: string; _parent_id: string }
         Returns: {
+          auto_flagged: boolean
           body: string
           created_at: string
           email: string
@@ -298,6 +305,23 @@ export type Database = {
           name: string
           parent_id: string | null
           post_id: string
+          reviewed: boolean
+          status: string
+        }
+      }
+      post_comment: {
+        Args: { _body: string; _email: string; _name: string; _parent_id: string | null; _post_id: string }
+        Returns: {
+          auto_flagged: boolean
+          body: string
+          created_at: string
+          email: string
+          id: string
+          is_admin_reply: boolean
+          name: string
+          parent_id: string | null
+          post_id: string
+          reviewed: boolean
           status: string
         }
       }
@@ -317,6 +341,7 @@ export type Database = {
       list_admin_comments: {
         Args: never
         Returns: {
+          auto_flagged: boolean
           body: string
           created_at: string
           email: string
@@ -327,6 +352,7 @@ export type Database = {
           post_id: string
           post_slug: string
           post_title: string
+          reviewed: boolean
           status: string
         }[]
       }

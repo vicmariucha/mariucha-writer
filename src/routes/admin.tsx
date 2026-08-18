@@ -7,7 +7,7 @@ import { RichTextEditor } from "@/components/rich-text-editor";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { adminPostsQuery, formatDate, formatDateTime, parseColor, slugify, tagColorOptions, tagsQuery, tagVisual, type Post, type Tag } from "@/lib/blog";
-import { adminCommentsQuery, adminReplyToComment, contactMessagesQuery, createPost, createTag, deleteComment, deleteContactMessage, deletePost, deleteTag, moderateComment, setContactHandled, setFeatured, updateCommentBody, updatePost, updateTag, uploadImage, type AdminComment, type CommentStatus, type ContactMessage, type PostInput } from "@/lib/blog-admin";
+import { adminCommentsQuery, adminReplyToComment, contactMessagesQuery, createPost, createTag, deleteComment, deleteContactMessage, deletePost, deleteTag, markCommentReviewed, moderateComment, setContactHandled, setFeatured, updateCommentBody, updatePost, updateTag, uploadImage, type AdminComment, type CommentStatus, type ContactMessage, type PostInput } from "@/lib/blog-admin";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
@@ -141,7 +141,9 @@ function Dashboard() {
   const { data: posts = [] } = useQuery(adminPostsQuery);
   const { data: tags = [] } = useQuery(tagsQuery);
   const { data: comments = [] } = useQuery(adminCommentsQuery);
-  const pendingCount = comments.filter((c) => c.status === "pending").length;
+  // Anything actually pending (spam-suspect) or simply never looked at yet
+  // (auto-approved and already live, but new) needs the admin's attention.
+  const needsAttentionCount = comments.filter((c) => c.status === "pending" || !c.reviewed).length;
   const [editing, setEditing] = useState<{ id: string | null; input: PostInput } | null>(null);
   const [showTags, setShowTags] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -204,9 +206,9 @@ function Dashboard() {
           >
             <Icon className="h-3.5 w-3.5" />
             {text}
-            {key === "comments" && pendingCount > 0 && (
+            {key === "comments" && needsAttentionCount > 0 && (
               <span className={`rounded-full px-1.5 py-0.5 text-[0.6rem] ${tab === key ? "bg-background text-foreground" : "bg-amber/20 text-amber"}`}>
-                {pendingCount}
+                {needsAttentionCount}
               </span>
             )}
           </button>
@@ -544,9 +546,10 @@ function PostForm({ initial, id, tags, onCancel, onSaved }: { initial: PostInput
 
 /* ---------------- Comments ---------------- */
 
-type CommentFilter = "all" | CommentStatus;
+type CommentFilter = "all" | CommentStatus | "needsReview";
 
 const STATUS_TABS: { key: CommentFilter; label: string }[] = [
+  { key: "needsReview", label: "Needs review" },
   { key: "pending", label: "Pending" },
   { key: "approved", label: "Approved" },
   { key: "rejected", label: "Rejected" },
@@ -564,7 +567,7 @@ function CommentsPanel() {
   const { data: comments = [] } = useQuery(adminCommentsQuery);
   const [pendingDelete, setPendingDelete] = useState<AdminComment | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<CommentFilter>("pending");
+  const [filter, setFilter] = useState<CommentFilter>("needsReview");
   const [query, setQuery] = useState("");
 
   const refresh = () => { void queryClient.invalidateQueries({ queryKey: ["comments"] }); };
@@ -575,8 +578,9 @@ function CommentsPanel() {
   });
 
   const byId = new Map(comments.map((c) => [c.id, c]));
-  const counts = {
+  const counts: Record<CommentFilter, number> = {
     all: comments.length,
+    needsReview: comments.filter((c) => !c.reviewed).length,
     pending: comments.filter((c) => c.status === "pending").length,
     approved: comments.filter((c) => c.status === "approved").length,
     rejected: comments.filter((c) => c.status === "rejected").length,
@@ -584,7 +588,7 @@ function CommentsPanel() {
 
   const q = query.trim().toLowerCase();
   const filtered = comments
-    .filter((c) => filter === "all" || c.status === filter)
+    .filter((c) => (filter === "all" ? true : filter === "needsReview" ? !c.reviewed : c.status === filter))
     .filter(
       (c) =>
         !q ||
@@ -599,7 +603,7 @@ function CommentsPanel() {
 
   return (
     <>
-      <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-5">
         {STATUS_TABS.map((tab) => (
           <button
             key={tab.key}
@@ -614,6 +618,10 @@ function CommentsPanel() {
           </button>
         ))}
       </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Comments now publish instantly and are open for anyone to reply to. "Needs review" covers both that quick
+        after-the-fact check and anything our spam filter held back on its own.
+      </p>
 
       <input
         type="search"
@@ -692,6 +700,11 @@ function AdminCommentRow({
     onSuccess: (_data, next) => { notify(`Marked as ${next}`, false); onChanged(); },
     onError: (err: Error) => notify(err.message, true),
   });
+  const dismiss = useMutation({
+    mutationFn: () => markCommentReviewed(comment.id),
+    onSuccess: () => { notify("Marked as reviewed", false); onChanged(); },
+    onError: (err: Error) => notify(err.message, true),
+  });
   const sendReply = useMutation({
     mutationFn: () => adminReplyToComment(comment.id, reply.trim()),
     onSuccess: () => { setReply(""); setReplying(false); notify("Reply published", false); onChanged(); },
@@ -724,6 +737,16 @@ function AdminCommentRow({
             {comment.is_admin_reply && (
               <span className="ml-2 rounded-full bg-accent/15 px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.14em] text-accent">
                 Your reply
+              </span>
+            )}
+            {!comment.reviewed && (
+              <span className="ml-2 rounded-full bg-cobalt/15 px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.14em] text-cobalt">
+                New
+              </span>
+            )}
+            {comment.auto_flagged && (
+              <span className="ml-2 rounded-full bg-destructive/15 px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.14em] text-destructive">
+                Possible spam
               </span>
             )}
           </p>
@@ -768,6 +791,17 @@ function AdminCommentRow({
             >
               Reject
             </button>
+            {!comment.reviewed && (
+              <button
+                type="button"
+                disabled={dismiss.isPending}
+                onClick={() => dismiss.mutate()}
+                title="Dismiss the “new” signal without approving or rejecting"
+                className="rounded-full border border-border px-4 py-1.5 text-xs uppercase tracking-[0.14em] text-muted-foreground hover:text-foreground disabled:opacity-40"
+              >
+                Mark reviewed
+              </button>
+            )}
           </>
         )}
 
