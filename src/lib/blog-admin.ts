@@ -96,30 +96,39 @@ export async function deleteTag(id: string): Promise<void> {
 
 /* ---------- Comments moderation ---------- */
 
+export type CommentStatus = "pending" | "approved" | "rejected";
+
 export type AdminComment = {
   id: string;
   post_id: string;
+  parent_id: string | null;
   name: string;
   email: string;
   body: string;
-  reply_body: string | null;
-  replied_at: string | null;
-  reply_notified_at: string | null;
+  status: CommentStatus;
+  is_admin_reply: boolean;
   created_at: string;
-  posts: { title: string; slug: string } | null;
+  post_title: string | null;
+  post_slug: string | null;
 };
 
 export async function fetchAdminComments(): Promise<AdminComment[]> {
   const { data, error } = await supabase.rpc("list_admin_comments");
   if (error) throw error;
   return ((data ?? []) as any[]).map((row) => ({
-    id: row.id, post_id: row.post_id, name: row.name, email: row.email, body: row.body,
-    reply_body: row.reply_body, replied_at: row.replied_at, reply_notified_at: row.reply_notified_at,
+    id: row.id,
+    post_id: row.post_id,
+    parent_id: row.parent_id,
+    name: row.name,
+    email: row.email,
+    body: row.body,
+    status: row.status as CommentStatus,
+    is_admin_reply: row.is_admin_reply,
     created_at: row.created_at,
-    posts: row.post_title ? { title: row.post_title, slug: row.post_slug } : null,
+    post_title: row.post_title,
+    post_slug: row.post_slug,
   }));
 }
-
 
 export const adminCommentsQuery = queryOptions({
   queryKey: ["comments", "admin"],
@@ -148,14 +157,18 @@ export async function updateCommentBody(id: string, body: string): Promise<void>
   await assertRowAffected(id, data, "Saving the comment edit");
 }
 
-export async function replyToComment(id: string, reply: string): Promise<void> {
-  const { data, error } = await supabase
-    .from("comments")
-    .update({ reply_body: reply, replied_at: new Date().toISOString() })
-    .eq("id", id)
-    .select("id");
+export async function moderateComment(id: string, status: CommentStatus): Promise<void> {
+  const { data, error } = await supabase.from("comments").update({ status }).eq("id", id).select("id");
   if (error) throw error;
-  await assertRowAffected(id, data, "Publishing the reply");
+  await assertRowAffected(id, data, `Marking the comment as ${status}`);
+}
+
+/** Publishes an admin reply as its own threaded, timestamped comment —
+ * always instantly approved, regardless of the moderation queue. */
+export async function adminReplyToComment(parentId: string, body: string): Promise<void> {
+  const { data, error } = await supabase.rpc("admin_reply_to_comment", { _parent_id: parentId, _body: body });
+  if (error) throw error;
+  if (!data) throw new Error("The reply did not save — check the admin_reply_to_comment permissions in Supabase.");
 }
 
 export async function deleteComment(id: string): Promise<void> {

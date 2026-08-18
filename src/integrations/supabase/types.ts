@@ -20,33 +20,33 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          is_admin_reply: boolean
           name: string
+          parent_id: string | null
           post_id: string
-          replied_at: string | null
-          reply_body: string | null
-          reply_notified_at: string | null
+          status: string
         }
         Insert: {
           body: string
           created_at?: string
           email: string
           id?: string
+          is_admin_reply?: boolean
           name: string
+          parent_id?: string | null
           post_id: string
-          replied_at?: string | null
-          reply_body?: string | null
-          reply_notified_at?: string | null
+          status?: string
         }
         Update: {
           body?: string
           created_at?: string
           email?: string
           id?: string
+          is_admin_reply?: boolean
           name?: string
+          parent_id?: string | null
           post_id?: string
-          replied_at?: string | null
-          reply_body?: string | null
-          reply_notified_at?: string | null
+          status?: string
         }
         Relationships: [
           {
@@ -54,6 +54,13 @@ export type Database = {
             columns: ["post_id"]
             isOneToOne: false
             referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
             referencedColumns: ["id"]
           },
         ]
@@ -238,28 +245,28 @@ export type Database = {
           body: string | null
           created_at: string | null
           id: string | null
+          is_admin_reply: boolean | null
           name: string | null
+          parent_id: string | null
           post_id: string | null
-          replied_at: string | null
-          reply_body: string | null
         }
         Insert: {
           body?: string | null
           created_at?: string | null
           id?: string | null
+          is_admin_reply?: boolean | null
           name?: string | null
+          parent_id?: string | null
           post_id?: string | null
-          replied_at?: string | null
-          reply_body?: string | null
         }
         Update: {
           body?: string | null
           created_at?: string | null
           id?: string | null
+          is_admin_reply?: boolean | null
           name?: string | null
+          parent_id?: string | null
           post_id?: string | null
-          replied_at?: string | null
-          reply_body?: string | null
         }
         Relationships: [
           {
@@ -269,10 +276,31 @@ export type Database = {
             referencedRelation: "posts"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
     Functions: {
+      admin_reply_to_comment: {
+        Args: { _body: string; _parent_id: string }
+        Returns: {
+          body: string
+          created_at: string
+          email: string
+          id: string
+          is_admin_reply: boolean
+          name: string
+          parent_id: string | null
+          post_id: string
+          status: string
+        }
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -286,6 +314,22 @@ export type Database = {
       }
       increment_post_views: { Args: { _slug: string }; Returns: number }
       is_admin: { Args: never; Returns: boolean }
+      list_admin_comments: {
+        Args: never
+        Returns: {
+          body: string
+          created_at: string
+          email: string
+          id: string
+          is_admin_reply: boolean
+          name: string
+          parent_id: string | null
+          post_id: string
+          post_slug: string
+          post_title: string
+          status: string
+        }[]
+      }
       owner_exists: { Args: never; Returns: boolean }
     }
     Enums: {

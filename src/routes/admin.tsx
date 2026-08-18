@@ -7,7 +7,7 @@ import { RichTextEditor } from "@/components/rich-text-editor";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { adminPostsQuery, formatDate, formatDateTime, parseColor, slugify, tagColorOptions, tagsQuery, tagVisual, type Post, type Tag } from "@/lib/blog";
-import { adminCommentsQuery, contactMessagesQuery, createPost, createTag, deleteComment, deleteContactMessage, deletePost, deleteTag, replyToComment, setContactHandled, setFeatured, updateCommentBody, updatePost, updateTag, uploadImage, type AdminComment, type ContactMessage, type PostInput } from "@/lib/blog-admin";
+import { adminCommentsQuery, adminReplyToComment, contactMessagesQuery, createPost, createTag, deleteComment, deleteContactMessage, deletePost, deleteTag, moderateComment, setContactHandled, setFeatured, updateCommentBody, updatePost, updateTag, uploadImage, type AdminComment, type CommentStatus, type ContactMessage, type PostInput } from "@/lib/blog-admin";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
@@ -140,6 +140,8 @@ function Dashboard() {
   const queryClient = useQueryClient();
   const { data: posts = [] } = useQuery(adminPostsQuery);
   const { data: tags = [] } = useQuery(tagsQuery);
+  const { data: comments = [] } = useQuery(adminCommentsQuery);
+  const pendingCount = comments.filter((c) => c.status === "pending").length;
   const [editing, setEditing] = useState<{ id: string | null; input: PostInput } | null>(null);
   const [showTags, setShowTags] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -202,6 +204,11 @@ function Dashboard() {
           >
             <Icon className="h-3.5 w-3.5" />
             {text}
+            {key === "comments" && pendingCount > 0 && (
+              <span className={`rounded-full px-1.5 py-0.5 text-[0.6rem] ${tab === key ? "bg-background text-foreground" : "bg-amber/20 text-amber"}`}>
+                {pendingCount}
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -537,33 +544,113 @@ function PostForm({ initial, id, tags, onCancel, onSaved }: { initial: PostInput
 
 /* ---------------- Comments ---------------- */
 
+type CommentFilter = "all" | CommentStatus;
+
+const STATUS_TABS: { key: CommentFilter; label: string }[] = [
+  { key: "pending", label: "Pending" },
+  { key: "approved", label: "Approved" },
+  { key: "rejected", label: "Rejected" },
+  { key: "all", label: "All" },
+];
+
+const STATUS_BADGE: Record<CommentStatus, string> = {
+  pending: "border-amber/50 bg-amber/10 text-amber",
+  approved: "border-accent/50 bg-accent/10 text-accent",
+  rejected: "border-destructive/40 bg-destructive/10 text-destructive",
+};
+
 function CommentsPanel() {
   const queryClient = useQueryClient();
   const { data: comments = [] } = useQuery(adminCommentsQuery);
   const [pendingDelete, setPendingDelete] = useState<AdminComment | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<CommentFilter>("pending");
+  const [query, setQuery] = useState("");
 
   const refresh = () => { void queryClient.invalidateQueries({ queryKey: ["comments"] }); };
   const remove = useMutation({
     mutationFn: (id: string) => deleteComment(id),
-    onSuccess: () => { setDeleteError(null); refresh(); },
-    onError: (err: Error) => setDeleteError(err.message),
+    onSuccess: () => { setActionError(null); refresh(); },
+    onError: (err: Error) => setActionError(err.message),
   });
+
+  const byId = new Map(comments.map((c) => [c.id, c]));
+  const counts = {
+    all: comments.length,
+    pending: comments.filter((c) => c.status === "pending").length,
+    approved: comments.filter((c) => c.status === "approved").length,
+    rejected: comments.filter((c) => c.status === "rejected").length,
+  };
+
+  const q = query.trim().toLowerCase();
+  const filtered = comments
+    .filter((c) => filter === "all" || c.status === filter)
+    .filter(
+      (c) =>
+        !q ||
+        c.name.toLowerCase().includes(q) ||
+        c.email.toLowerCase().includes(q) ||
+        c.body.toLowerCase().includes(q) ||
+        (c.post_title ?? "").toLowerCase().includes(q),
+    )
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
   if (comments.length === 0) return <p className="mt-10 text-sm text-muted-foreground">No comments yet.</p>;
 
   return (
     <>
-      {deleteError && <p className="mt-4 text-sm text-destructive">{deleteError}</p>}
-      <ul className="mt-8 divide-y divide-border border-b border-border">
-        {comments.map((c) => (
-          <CommentRow key={c.id} comment={c} onChanged={refresh} onDelete={() => setPendingDelete(c)} />
+      <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {STATUS_TABS.map((tab) => (
+          <button
+            key={tab.key}
+            type="button"
+            onClick={() => setFilter(tab.key)}
+            className={`rounded-sm border px-4 py-3 text-left transition-colors ${
+              filter === tab.key ? "border-foreground bg-foreground/5" : "border-border hover:border-foreground/40"
+            }`}
+          >
+            <span className="block font-display text-2xl">{counts[tab.key]}</span>
+            <span className="text-xs uppercase tracking-[0.14em] text-muted-foreground">{tab.label}</span>
+          </button>
         ))}
-      </ul>
+      </div>
+
+      <input
+        type="search"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search by name, email, article or text"
+        aria-label="Search comments"
+        className={`${field} mt-4`}
+      />
+
+      {actionError && <p className="mt-4 text-sm text-destructive">{actionError}</p>}
+
+      {filtered.length === 0 ? (
+        <p className="mt-10 text-sm text-muted-foreground">No comments match this filter.</p>
+      ) : (
+        <ul className="mt-6 divide-y divide-border border-b border-border">
+          {filtered.map((c) => (
+            <AdminCommentRow
+              key={c.id}
+              comment={c}
+              parent={c.parent_id ? byId.get(c.parent_id) ?? null : null}
+              onChanged={refresh}
+              onDelete={() => setPendingDelete(c)}
+              onError={setActionError}
+            />
+          ))}
+        </ul>
+      )}
+
       <ConfirmDialog
         open={pendingDelete !== null}
         title="Delete this comment?"
-        description={pendingDelete ? `The comment by ${pendingDelete.name} will be removed permanently.` : ""}
+        description={
+          pendingDelete
+            ? `The comment by ${pendingDelete.name} will be removed permanently${pendingDelete.is_admin_reply ? "" : ", along with any replies to it"}.`
+            : ""
+        }
         confirmLabel="Delete comment"
         onCancel={() => setPendingDelete(null)}
         onConfirm={() => { if (pendingDelete) remove.mutate(pendingDelete.id); setPendingDelete(null); }}
@@ -572,47 +659,84 @@ function CommentsPanel() {
   );
 }
 
-function CommentRow({ comment, onChanged, onDelete }: { comment: AdminComment; onChanged: () => void; onDelete: () => void }) {
+function AdminCommentRow({
+  comment,
+  parent,
+  onChanged,
+  onDelete,
+  onError,
+}: {
+  comment: AdminComment;
+  parent: AdminComment | null;
+  onChanged: () => void;
+  onDelete: () => void;
+  onError: (message: string) => void;
+}) {
   const [body, setBody] = useState(comment.body);
-  const [reply, setReply] = useState(comment.reply_body ?? "");
+  const [replying, setReplying] = useState(false);
+  const [reply, setReply] = useState("");
   const [status, setStatus] = useState<{ text: string; isError: boolean } | null>(null);
+
+  const notify = (text: string, isError: boolean) => {
+    setStatus({ text, isError });
+    if (isError) onError(text);
+  };
 
   const saveBody = useMutation({
     mutationFn: () => updateCommentBody(comment.id, body.trim()),
-    onSuccess: () => { setStatus({ text: "Comment updated", isError: false }); onChanged(); },
-    onError: (err: Error) => setStatus({ text: err.message, isError: true }),
+    onSuccess: () => { notify("Comment updated", false); onChanged(); },
+    onError: (err: Error) => notify(err.message, true),
   });
-  const saveReply = useMutation({
-    mutationFn: () => replyToComment(comment.id, reply.trim()),
-    onSuccess: () => { setStatus({ text: "Reply published", isError: false }); onChanged(); },
-    onError: (err: Error) => setStatus({ text: err.message, isError: true }),
+  const moderate = useMutation({
+    mutationFn: (next: CommentStatus) => moderateComment(comment.id, next),
+    onSuccess: (_data, next) => { notify(`Marked as ${next}`, false); onChanged(); },
+    onError: (err: Error) => notify(err.message, true),
+  });
+  const sendReply = useMutation({
+    mutationFn: () => adminReplyToComment(comment.id, reply.trim()),
+    onSuccess: () => { setReply(""); setReplying(false); notify("Reply published", false); onChanged(); },
+    onError: (err: Error) => notify(err.message, true),
   });
 
   const anchor = `comment-${comment.id}`;
+  const articleLink = comment.post_slug ? (
+    <Link
+      to="/articles/$slug"
+      params={{ slug: comment.post_slug }}
+      hash={anchor}
+      target="_blank"
+      className="link-underline inline-flex items-center gap-1 text-foreground"
+    >
+      {comment.post_title ?? "View article"}
+      <ExternalLink className="h-3 w-3" />
+    </Link>
+  ) : (
+    "Unknown article"
+  );
 
   return (
-    <li className="py-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm">
-          <span className="font-medium">{comment.name}</span> <span className="text-muted-foreground">· {comment.email}</span>
-        </p>
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-muted-foreground">
-            {comment.posts ? (
-              <Link
-                to="/articles/$slug"
-                params={{ slug: comment.posts.slug }}
-                hash={anchor}
-                target="_blank"
-                className="link-underline inline-flex items-center gap-1 text-foreground"
-              >
-                {comment.posts.title}
-                <ExternalLink className="h-3 w-3" />
-              </Link>
-            ) : (
-              "Unknown article"
-            )}{" "}
-            · {formatDateTime(comment.created_at)}
+    <li id={`admin-comment-${comment.id}`} className="scroll-mt-24 py-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-sm">
+            <span className="font-medium">{comment.name}</span>{" "}
+            <span className="text-muted-foreground">· {comment.email}</span>
+            {comment.is_admin_reply && (
+              <span className="ml-2 rounded-full bg-accent/15 px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.14em] text-accent">
+                Your reply
+              </span>
+            )}
+          </p>
+          {parent && (
+            <a href={`#admin-comment-${parent.id}`} className="link-underline mt-1 inline-block text-xs text-muted-foreground">
+              ↳ in reply to {parent.name}
+            </a>
+          )}
+          <p className="mt-1 text-xs text-muted-foreground">{articleLink} · {formatDateTime(comment.created_at)}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className={`rounded-full border px-3 py-1 text-[0.65rem] uppercase tracking-[0.14em] ${STATUS_BADGE[comment.status]}`}>
+            {comment.status}
           </span>
           <button type="button" onClick={onDelete} aria-label="Delete comment" className="rounded-full border border-border p-2 text-muted-foreground transition-colors hover:border-destructive/50 hover:text-destructive">
             <Trash2 className="h-4 w-4" />
@@ -625,15 +749,56 @@ function CommentRow({ comment, onChanged, onDelete }: { comment: AdminComment; o
         <button type="button" disabled={body.trim() === comment.body || saveBody.isPending} onClick={() => saveBody.mutate()} className="rounded-full border border-border px-4 py-1.5 text-xs uppercase tracking-[0.14em] text-muted-foreground hover:text-foreground disabled:opacity-40">
           Save edit
         </button>
-      </div>
 
-      <textarea className={`${field} mt-3 min-h-20 resize-y`} value={reply} onChange={(e) => setReply(e.target.value)} placeholder={`Reply to ${comment.name} (shown publicly under the comment)`} aria-label="Your reply" />
-      <div className="mt-2 flex flex-wrap items-center gap-3">
-        <button type="button" disabled={!reply.trim() || reply.trim() === (comment.reply_body ?? "") || saveReply.isPending} onClick={() => saveReply.mutate()} className="rounded-full bg-foreground px-4 py-1.5 text-xs uppercase tracking-[0.14em] text-background disabled:opacity-40">
-          Publish reply
+        {!comment.is_admin_reply && (
+          <>
+            <button
+              type="button"
+              disabled={comment.status === "approved" || moderate.isPending}
+              onClick={() => moderate.mutate("approved")}
+              className="rounded-full border border-accent/50 px-4 py-1.5 text-xs uppercase tracking-[0.14em] text-accent hover:bg-accent/10 disabled:opacity-40"
+            >
+              Approve
+            </button>
+            <button
+              type="button"
+              disabled={comment.status === "rejected" || moderate.isPending}
+              onClick={() => moderate.mutate("rejected")}
+              className="rounded-full border border-destructive/40 px-4 py-1.5 text-xs uppercase tracking-[0.14em] text-destructive hover:bg-destructive/10 disabled:opacity-40"
+            >
+              Reject
+            </button>
+          </>
+        )}
+
+        <button type="button" onClick={() => setReplying((v) => !v)} className="rounded-full bg-foreground px-4 py-1.5 text-xs uppercase tracking-[0.14em] text-background">
+          {replying ? "Cancel reply" : "Reply"}
         </button>
+
         {status && <span className={`text-xs ${status.isError ? "text-destructive" : "text-accent"}`}>{status.text}</span>}
       </div>
+
+      {replying && (
+        <div className="mt-3">
+          <textarea
+            className={`${field} min-h-20 resize-y`}
+            value={reply}
+            onChange={(e) => setReply(e.target.value)}
+            placeholder={`Reply to ${comment.name} (published immediately, with today's date and time)`}
+            aria-label="Your reply"
+          />
+          <div className="mt-2 flex items-center gap-3">
+            <button
+              type="button"
+              disabled={!reply.trim() || sendReply.isPending}
+              onClick={() => sendReply.mutate()}
+              className="rounded-full bg-foreground px-4 py-1.5 text-xs uppercase tracking-[0.14em] text-background disabled:opacity-40"
+            >
+              {sendReply.isPending ? "Publishing…" : "Publish reply"}
+            </button>
+          </div>
+        </div>
+      )}
     </li>
   );
 }

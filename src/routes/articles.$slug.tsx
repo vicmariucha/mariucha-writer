@@ -3,7 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { CommentsSection } from "@/components/comments-section";
 import { PostInteractions } from "@/components/post-interactions";
-import { formatDate, postQuery, postsQuery, readTime, tagVisual } from "@/lib/blog";
+import { commentsQuery, formatDate, postQuery, postsQuery, readTime, tagVisual } from "@/lib/blog";
 
 const SITE_URL = "https://writer.vicmariucha.com.br";
 
@@ -14,6 +14,9 @@ export const Route = createFileRoute("/articles/$slug")({
       context.queryClient.ensureQueryData(postsQuery),
     ]);
     if (!post) throw notFound();
+    // Prefetched so approved comments render into the static HTML too,
+    // not just after client-side hydration (matters for SEO/AI crawlers).
+    await context.queryClient.ensureQueryData(commentsQuery(post.id));
     return {
       title: post.title,
       excerpt: post.excerpt,

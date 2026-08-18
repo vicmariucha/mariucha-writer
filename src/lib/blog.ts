@@ -161,21 +161,51 @@ export async function fetchTags(): Promise<Tag[]> {
 export type Comment = {
   id: string;
   post_id: string;
+  parent_id: string | null;
   name: string;
   body: string;
-  reply_body: string | null;
-  replied_at: string | null;
+  is_admin_reply: boolean;
   created_at: string;
 };
+
+/** A top-level comment with its replies attached (always one level deep — a
+ * reply to a reply is folded into the same thread, like YouTube/Instagram). */
+export type CommentThread = Comment & { replies: Comment[] };
 
 export async function fetchComments(postId: string): Promise<Comment[]> {
   const { data, error } = await supabase
     .from("comments_public")
-    .select("id, post_id, name, body, reply_body, replied_at, created_at")
+    .select("id, post_id, parent_id, name, body, is_admin_reply, created_at")
     .eq("post_id", postId)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: true });
   if (error) throw error;
   return (data ?? []) as Comment[];
+}
+
+/** Groups a flat list of comments into threads: top-level comments (newest
+ * first), each carrying its replies (oldest first, i.e. reading order). A
+ * reply whose parent isn't in the list (e.g. parent still pending) is shown
+ * as its own standalone thread instead of being dropped. */
+export function buildCommentThreads(comments: Comment[]): CommentThread[] {
+  const byId = new Map(comments.map((c) => [c.id, c]));
+  const roots: CommentThread[] = [];
+  const repliesByRoot = new Map<string, Comment[]>();
+
+  for (const c of comments) {
+    const isOrphanReply = c.parent_id !== null && !byId.has(c.parent_id);
+    if (c.parent_id === null || isOrphanReply) continue;
+    const list = repliesByRoot.get(c.parent_id) ?? [];
+    list.push(c);
+    repliesByRoot.set(c.parent_id, list);
+  }
+
+  for (const c of comments) {
+    const isOrphanReply = c.parent_id !== null && !byId.has(c.parent_id);
+    if (c.parent_id !== null && !isOrphanReply) continue;
+    roots.push({ ...c, replies: repliesByRoot.get(c.id) ?? [] });
+  }
+
+  return roots.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 }
 
 
