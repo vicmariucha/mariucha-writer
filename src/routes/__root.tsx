@@ -5,6 +5,16 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+// Importing these through Vite (instead of hardcoding a filename) means the
+// preload hrefs below always match whatever content hash the build actually
+// emits for these files — no risk of pointing at a stale filename after a
+// future rebuild. These three are the only font files needed above the
+// fold (the hero heading, its italic emphasis, and body text); preloading
+// them lets the browser start fetching the fonts in parallel with the
+// stylesheet instead of waiting to parse the CSS first to discover them.
+import interLatinNormalUrl from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+import playfairLatinNormalUrl from "@fontsource-variable/playfair-display/files/playfair-display-latin-wght-normal.woff2?url";
+import playfairLatinItalicUrl from "@fontsource-variable/playfair-display/files/playfair-display-latin-wght-italic.woff2?url";
 
 function NotFoundComponent() {
   return (
@@ -71,7 +81,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       // Fonts are self-hosted now (see styles.css) — no more external
       // fonts.googleapis.com/fonts.gstatic.com round trips before they
-      // could even start loading.
+      // could even start loading. These preloads start the font downloads
+      // immediately instead of waiting for the browser to parse the CSS
+      // and discover the @font-face rules — that serial "CSS then font"
+      // hop was flagged by PageSpeed Insights as a critical-request-chain
+      // delay, and it's exactly what pushed the hero heading's font-swap
+      // reflow late enough to still register a small amount of CLS.
+      { rel: "preload", href: interLatinNormalUrl, as: "font", type: "font/woff2", crossOrigin: "anonymous" },
+      { rel: "preload", href: playfairLatinNormalUrl, as: "font", type: "font/woff2", crossOrigin: "anonymous" },
+      { rel: "preload", href: playfairLatinItalicUrl, as: "font", type: "font/woff2", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
       { rel: "apple-touch-icon", href: "/favicon.png" },

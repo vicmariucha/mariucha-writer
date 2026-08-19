@@ -27,12 +27,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://writer.vicmariucha.com.br/articles/your-model-is-not-thinking</loc>
-    <lastmod>2026-08-05T20:26:47.136Z</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://writer.vicmariucha.com.br/articles/i-let-an-llm-review-my-pull-request</loc>
     <lastmod>2026-08-05T19:50:13.486Z</lastmod>
     <changefreq>monthly</changefreq>
@@ -71,6 +65,12 @@
   <url>
     <loc>https://writer.vicmariucha.com.br/articles/i-explained-recursion-to-my-mother</loc>
     <lastmod>2026-08-05T20:07:42.474Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://writer.vicmariucha.com.br/articles/your-model-is-not-thinking</loc>
+    <lastmod>2026-08-05T20:26:47.136Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
