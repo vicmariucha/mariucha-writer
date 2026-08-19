@@ -2,6 +2,17 @@
 @source "../src";
 @import "tw-animate-css";
 
+/* Self-hosted (no more render-blocking round trip to fonts.googleapis.com
+   + fonts.gstatic.com before these could even start downloading — the
+   biggest single win for FCP/LCP and, since the swap-in used to visibly
+   reflow the hero heading, for CLS too). Only the weight axes actually
+   used are imported: Inter's normal weights for body text, Playfair
+   Display's normal + italic for headings (the "actually finish reading"
+   emphasis in the homepage hero is italic). */
+@import "@fontsource-variable/inter/wght.css";
+@import "@fontsource-variable/playfair-display/wght.css";
+@import "@fontsource-variable/playfair-display/wght-italic.css";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -10,8 +21,8 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
-  --font-display: "Playfair Display", Georgia, serif;
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Playfair Display Variable", Georgia, serif;
+  --font-sans: "Inter Variable", system-ui, sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

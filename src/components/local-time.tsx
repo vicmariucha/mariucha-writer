@@ -18,11 +18,13 @@ export function LocalTime({ suffix = "my time zone" }: { suffix?: string }) {
     return () => clearInterval(id);
   }, []);
 
-  if (!time) return <span suppressHydrationWarning>{suffix}</span>;
-
+  // Same shape from the very first paint either way ("--:--" vs "14:07"
+  // is the same width) — switching between "{suffix}" alone and "{time} –
+  // {suffix}" once the clock kicks in was changing how this line wraps on
+  // narrow screens, shifting everything below it down.
   return (
     <span suppressHydrationWarning>
-      {time} – {suffix}
+      {time ?? "--:--"} – {suffix}
     </span>
   );
 }

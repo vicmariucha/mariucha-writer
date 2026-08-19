@@ -53,7 +53,7 @@ function CommentBody({ comment }: { comment: Comment }) {
         {comment.name}
         {comment.is_admin_reply && (
           <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[0.65rem] uppercase tracking-[0.14em] text-accent">
-            Vic replied
+            Author
           </span>
         )}
       </p>

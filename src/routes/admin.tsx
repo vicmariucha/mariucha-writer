@@ -803,28 +803,38 @@ function AdminCommentRow({
       <div className="mt-2 flex flex-wrap items-center gap-3">
         {!comment.is_admin_reply && (
           <>
-            <button
-              type="button"
-              disabled={comment.status === "approved" || moderate.isPending}
-              onClick={() => moderate.mutate("approved")}
-              className="rounded-full border border-accent/50 px-4 py-1.5 text-xs uppercase tracking-[0.14em] text-accent hover:bg-accent/10 disabled:opacity-40"
-            >
-              Approve
-            </button>
-            <button
-              type="button"
-              disabled={comment.status === "rejected" || moderate.isPending}
-              onClick={() => moderate.mutate("rejected")}
-              className="rounded-full border border-destructive/40 px-4 py-1.5 text-xs uppercase tracking-[0.14em] text-destructive hover:bg-destructive/10 disabled:opacity-40"
-            >
-              Reject
-            </button>
-            {!comment.reviewed && (
+            {/* Only show the action that would actually change something —
+                a disabled "Approve" sitting next to "Mark reviewed" for a
+                comment that already auto-published just looked broken. */}
+            {comment.status !== "approved" && (
+              <button
+                type="button"
+                disabled={moderate.isPending}
+                onClick={() => moderate.mutate("approved")}
+                className="rounded-full border border-accent/50 px-4 py-1.5 text-xs uppercase tracking-[0.14em] text-accent hover:bg-accent/10 disabled:opacity-40"
+              >
+                Approve
+              </button>
+            )}
+            {comment.status !== "rejected" && (
+              <button
+                type="button"
+                disabled={moderate.isPending}
+                onClick={() => moderate.mutate("rejected")}
+                className="rounded-full border border-destructive/40 px-4 py-1.5 text-xs uppercase tracking-[0.14em] text-destructive hover:bg-destructive/10 disabled:opacity-40"
+              >
+                Reject
+              </button>
+            )}
+            {/* Only offered when the comment is already settled (usually
+                auto-approved) — for a still-pending one, Approve/Reject are
+                the real decision and already clear the "new" signal. */}
+            {comment.status !== "pending" && !comment.reviewed && (
               <button
                 type="button"
                 disabled={dismiss.isPending}
                 onClick={() => dismiss.mutate()}
-                title="Dismiss the “new” signal without approving or rejecting"
+                title="Confirm it's fine to stay as-is, without changing its status"
                 className="rounded-full border border-border px-4 py-1.5 text-xs uppercase tracking-[0.14em] text-muted-foreground hover:text-foreground disabled:opacity-40"
               >
                 Mark reviewed

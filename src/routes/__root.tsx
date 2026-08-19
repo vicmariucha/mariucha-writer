@@ -69,10 +69,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/33d7d032-00b3-411f-844b-24d0ae79bea5/id-preview-088be265--5acebda7-6162-4cc0-861d-c38349d13e7b.lovable.app-1785895597859.png" },
     ],
     links: [
+      // Fonts are self-hosted now (see styles.css) — no more external
+      // fonts.googleapis.com/fonts.gstatic.com round trips before they
+      // could even start loading.
       { rel: "stylesheet", href: appCss },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..600&family=Inter:wght@300;400;500;600&display=swap" },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
       { rel: "apple-touch-icon", href: "/favicon.png" },
     ],
